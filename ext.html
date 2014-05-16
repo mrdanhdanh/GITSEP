@@ -18,6 +18,9 @@
             var typeview = Ext.create('Ext.data.Store', {
                 fields: ['send', 'name'],
                 data : [
+                    {"send":"1p", "name":"1 phút"},
+                    {"send":"5p", "name":"5 phút"},
+                    {"send":"15p", "name":"15 phút"},
                     {"send":"h", "name":"Giờ"},
                     {"send":"d", "name":"Ngày"},
                     {"send":"m", "name":"Tháng"},
@@ -27,12 +30,12 @@
                 subs = Ext.create('Ext.data.Store', {
                     fields: ['send', 'name'],
                     data : [
-                        {"send":"1", "name":"Metan"},
-                        {"send":"2", "name":"NMHC"},
-                        {"send":"3", "name":"Ozone"},
-                        {"send":"4", "name":"CO"},
-                        {"send":"5", "name":"SO2"},
-                        {"send":"6", "name":"PM2.5"}
+                        {"send":"2", "name":"Metan"},
+                        {"send":"3", "name":"NMHC"},
+                        {"send":"7", "name":"Ozone"},
+                        {"send":"8", "name":"CO"},
+                        {"send":"9", "name":"SO2"},
+                        {"send":"10", "name":"PM2.5"}
                     ]
                 }),
                 unit = Ext.create('Ext.data.Store', {
@@ -45,7 +48,8 @@
             // Tạo khung data grid
             var store = Ext.create('Ext.data.ArrayStore', {
                 fields: [
-                    {name: 'time', type: 'date', dateFormat: 'Y-m-d H:i:s'},
+                    {name: 'date', type: 'date', dateFormat: 'Y-m-d'},
+                    {name: 'time', type: 'date', dateFormat: 'H:i:s'},
                     {name: 'Metan', type: 'float'},
                     {name: 'NMHC', type: 'float'},
                     {name: 'Ozone', type: 'float'},
@@ -92,7 +96,6 @@
                         xtype: 'timefield',
                         fieldLabel: 'Time',
                         name: 'time',
-                        submitValue: false,
                         format: 'H:i',
                         increment: 60,
                         allowBlank: true
@@ -104,7 +107,7 @@
                         queryMode: 'local',
                         displayField: 'name',
                         valueField: 'send',
-                        value: 'h',
+                        value: '5p',
                         allowBlank: false
 
                     },{
@@ -115,7 +118,7 @@
                         fieldLabel: 'Substance',
                         name: 'subs',
                         displayField: 'name',
-                        value: '1',
+                        value: '2',
                         valueField: 'send'
                     },{
                         xtype: 'combo',
@@ -142,6 +145,7 @@
             var form = this.up('form').getForm();
             if (form.isValid()) {
                 form.submit({
+                    submitEmptyText: true,
                     waitMsg: 'Đang chuyển yêu cầu...',
                     success: function(form, action) {
                         showdata(action.result.root, action.result.subs);
@@ -170,10 +174,17 @@
                     stateId: 'stateGrid',
                     columns: [
                         {
-                            text : 'Thời gian',
-                            width : '27%',
+                            text : 'Ngày',
+                            width : '14%',
                             sortable : true,
-                            renderer : Ext.util.Format.dateRenderer('d/m/Y H:i:s'),
+                            renderer : Ext.util.Format.dateRenderer('d/m/Y'),
+                            dataIndex: 'date'
+                        },
+                        {
+                            text : 'Thời gian',
+                            width : '14%',
+                            sortable : true,
+                            renderer : Ext.util.Format.dateRenderer('H:i:s'),
                             dataIndex: 'time'
                         },
                         {
@@ -304,9 +315,9 @@ options = {
             var jyea=result[i][0].substr(0,4);
             var jmon=result[i][0].substr(5,2)-1;
             var jday=result[i][0].substr(8,2);
-            var jhou=result[i][0].substr(11,2);
-            var jmin=result[i][0].substr(14,2);
-            var jsec=result[i][0].substr(17,2);
+            var jhou=result[i][1].substr(0,2);
+            var jmin=result[i][1].substr(3,2);
+            var jsec=result[i][1].substr(6,2);
             options.series[0].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),result[i][subs]]);                        
         }
     $('#chart-innerCt').highcharts(options);

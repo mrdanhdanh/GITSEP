@@ -38,6 +38,9 @@ if (substr($_POST["date"],0,4) <> "")
 //Collect data value
 switch ($view)
 {
+    case "5p":
+        $dataview="air_quality_data_5min";
+        break;
     case "raw":
         $dataview="data_raw";
         break;
@@ -52,15 +55,16 @@ switch ($view)
     dafault:
         $dataview="data_raw";
 }
-$result = pg_query($db_conn, "SELECT * FROM $dataview WHERE to_char(time,'$timeview')='$time' ORDER BY time");
+$result = pg_query($db_conn, "SELECT * FROM $dataview WHERE to_char(date,'$timeview')='$time' ORDER BY date");
 $count=0;
 $countchart=0;
 $total=0;
 $data=array(array(null));
 while ($row = pg_fetch_array($result)) {
     $data[$count][0]=$row[1];
+    $data[$count][1]=$row[2];
 
-    for ($i=1;$i<=6;$i++) {
+    for ($i=2;$i<=10;$i++) {
         $data[$count][$i]=round($row[$i+1],3);
     }
     $count++;

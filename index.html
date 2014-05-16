@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>SEP</title>
+    <link href='http://fonts.googleapis.com/css?family=Roboto&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="js/resources/css/ext-all.css">
+    <link rel="stylesheet" type="text/css" href="js/examples/shared/example.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script type="text/javascript" src="js/ext-all.js"></script>
+    <script src="javascript/jquery-1.11.0.js"></script>
+    <script>    
+        $(document).ready(function(){
+            function check(value) {
+            var boolean;
+            if ($("#bm").val()=="big") {
+                if (value>=$("#num").val()) boolean=true;
+                else boolean=false;
+            }
+            else {
+                if (value<$("#num").val()) boolean=true;
+                else boolean=false;};
+            return boolean;
+        }
+            $(document).ajaxStart(function(){
+                $("#wait").css("display","block");
+            });
+            $(document).ajaxComplete(function(){
+                $("#wait").css("display","none");
+            });
+            $("#show").hide();
+            $("#hide").click(function(){
+                $("#show").toggle(500);
+            });
+            $("#ajax").click(function(){
+                $.ajax({url:"php/qcvn.php", // DÙng AJAX gửi biến qua PHP lấy đường chuẩn
+                        type:"POST",
+                        cache:"false",
+                        data:
+                        {
+                            sub:$("#sub").val(),
+                            unit:$("#unit").val()
+                        },
+                        dataType:"json",
+                        success:function(result) {
+                            name=result[0];
+                            qcvn=result[1];
+                            unitshow=result[2];
+                        }});
+                $.ajax({url:"process.php", // DÙng AJAX gửi biến qua PHP lấy data
+                        type:"POST",
+                        cache:"false",
+                        data:
+                        {
+                            date:$("#date").val(),
+                            time:$("#time").val(),
+                            view:$("#view").val() 
+                        },
+                        dataType:"json",
+                        success:function(result) {
+                    // Tạo options cho chart
+                           
+                    options={
+                    chart: {
+                        type: 'spline',
+                        zoomType: 'x',  
+                        style: {fontFamily: 'Roboto'}
+                    },
+                    title: {
+                        text: 'Nồng độ '+ name +' theo thời gian'
+                    },
+                    subtitle: {
+                        text: 'Maintain'
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        dateTimeLabelFormats: { // don't display the dummy year
+                        month: '%e. %b',
+                        year: '%b'
+                    },
+                        title: {
+                            text: 'Thời gian'
+                        }
+                    },       
+                    yAxis: {
+                        min:0,
+                        title: {
+                            text: 'Nồng độ '+unitshow
+                        },
+                        plotLines: [{
+                   value: qcvn,
+	                color: 'red',
+	                width: 2,
+	                label: {
+	                    text: 'Qui chuẩn Việt Nam: '+qcvn+' '+unitshow,
+                        align: 'left',
+	                    style: {
+	                        color: 'gray'
+                      }
+                   }  
+	           }]
+                
+                    },
+                    tooltip: {
+                        formatter: function() {
+                        return 'Thời gian: ' + Highcharts.dateFormat('%H:%M', this.x)+'<br/>'+
+                            'Nồng độ: '+ this.y +' '+unitshow;
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        
+                        series: {
+                            cursor: 'pointer'
+                        },
+                    },    
+                    series: [{}],
+                    lang: {
+                        noData: "Không có số liệu theo yêu cầu"
+                    },
+                    noData: {
+                        style: {    
+                            fontWeight: 'bold',     
+                            fontSize: '20px',
+                            color: '#303030'        
+                        }
+                    }
+                    };
+                    options.series[0].data=[];
+                    // Xử lý data JSON chuyển về
+                    for (var i=0;i<result.length;i++) {
+                        if (check(result[i][$("#sub").val()])==true || $("#num").val()==null) {
+                        var jyea=result[i][0].substr(0,4);
+                        var jmon=result[i][0].substr(5,2)-1;
+                        var jday=result[i][0].substr(8,2);
+                        var jhou=result[i][0].substr(11,2);
+                        var jmin=result[i][0].substr(14,2);
+                        var jsec=result[i][0].substr(17,2);
+                        options.series[0].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),result[i][$("#sub").val()]]);
+                        }
+                    }
+                    /*$("#div1").append(options.series[0].data);        */
+                    $('#container').highcharts(options); // Tạo chart
+Ext.require([
+    'Ext.grid.*',
+    'Ext.data.*',
+    'Ext.util.*',
+    'Ext.state.*',
+    
+]);
+
+Ext.onReady(function() {
+    Ext.QuickTips.init();
+    
+    // setup the state provider, all state information will be saved to a cookie
+    Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider'));
+
+    // sample static data for the store
+    var myData = result;
+
+    /**
+     * Custom function used for column renderer
+     * @param {Object} val
+
+    function change(val) {
+        if (val > 0) {
+            return '<span style="color:green;">' + val + '</span>';
+        } else if (val < 0) {
+            return '<span style="color:red;">' + val + '</span>';
+        }
+        return val;
+    }     */
+
+    // create the data store
+    var store = Ext.create('Ext.data.ArrayStore', {
+        fields: [
+           {name: 'time', type: 'date', dateFormat: 'Y-n-j H:i:s'},
+           {name: 'Metan',      type: 'float'},
+           {name: 'NMHC',     type: 'float'},
+           {name: 'Ozone',  type: 'float'},
+           {name: 'SO2',      type: 'float'},
+           {name: 'CO',     type: 'float'},
+           {name: 'PM25',  type: 'float'}
+           
+        ],
+        data: myData
+    });
+
+    // create the Grid
+    var grid = Ext.create('Ext.grid.Panel', {
+        store: store,
+        stateful: true,
+        stateId: 'stateGrid',
+        columns: [
+            {
+                text     : 'Thời gian',
+                width    : 100,
+                sortable : true,
+                renderer : Ext.util.Format.dateRenderer('d/m/Y H:i:s'),
+                dataIndex: 'time'
+            },
+            {
+                text     : 'Metan',
+                width    : 75,
+                sortable : true,
+                dataIndex: 'Metan'
+            },
+            {
+                text     : 'NMHC',
+                width    : 75,
+                sortable : true,
+                dataIndex: 'NMHC'
+            },
+            {
+                text     : 'Ozone',
+                width    : 75,
+                sortable : true,
+                dataIndex: 'Ozone'
+            },
+            {
+                text     : 'CO',
+                width    : 75,
+                sortable : true,
+                dataIndex: 'CO'
+            },
+            {
+                text     : 'SO2',
+                width    : 75,
+                sortable : true,
+                dataIndex: 'SO2'
+            },
+            {
+                text     : 'PM25',
+                width    : 75,
+                sortable : true,
+                dataIndex: 'PM25'
+            },
+            
+        ],
+        height: 350,
+        width: 600,
+        title: 'Bảng nồng độ',
+        renderTo: 'grid-example',
+        resizable: true,
+        viewConfig: {
+            stripeRows: true
+        }
+    });
+});
+                    }
+                });      
+            });
+        });
+    </script>
+   
+</head>
+<body>
+    <script src="highcharts/js/highcharts.js"></script>
+<script src="highcharts/js/modules/no-data-to-display.js"></script>
+<script src="highcharts/js/modules/exporting.js"></script>
+    
+	<form id="form" method="post" >
+        <fieldset>
+            <legend>Customize</legend>
+        Date: <input id="date" type="date" autofocus required value="2013-09-01">
+        Time: <input type="time" id="time">
+        Type data view:<select id="view" >
+        <option value="h">Giờ</option>
+        <option value="d">Ngày</option>
+        <option value="m">Tháng</option>
+        <option value="raw">Raw</option>
+        </select><br>
+        Substance: <select id="sub">
+        <option value="1">Metan</option>
+        <option value="2">NMHC</option>
+        <option value="3">Ozone</option>
+        <option value="4">CO</option>
+        <option value="5">SO2</option>
+        <option value="6">PM2.5</option>
+        </select>
+        Unit: <select id="unit">
+        <option value="md">Mật độ</option>
+        <option value="si">Hệ SI</option>
+        
+        </select>
+        <br>
+           
+        <button id="hide" type="button">Nâng cao</button>
+        <br>
+        <div id="show">
+        Concentrate: <input type="number" id="num" step="0.001" max="999"><br>
+        <select id="bm">
+        <option value="big">Lớn hơn</option>
+        <option value="small">Bé hơn</option>
+        </select>
+        </div>
+        <button type="button" id="ajax">Request</button><button type="reset">Reset</button>
+            </fieldset> 
+    </form>
+    <div id="wait" style="display:none;width:69px;height:89px;border:1px solid black;position:absolute;top:50%;left:50%;padding:2px;"><img src='test/demo_wait.gif' width="64" height="64" /><br>Loading..</div>
+     <div id="div1">Test</div>
+    <div id="container" style="min-width: 310px; margin: 0 auto">Test</div>
+    <div id="grid-example">Test</div>
+</body>
+</html>

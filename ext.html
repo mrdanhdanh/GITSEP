@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+    <link href="css/ext-theme-neptune-all-debug.css" type="text/css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Roboto&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
+<style>
+
+</style>
+    <script type="text/javascript" src="javascript/ext-all.js"></script>
+    <script src="javascript/jquery-2.1.1.min.js"></script>
+<script src="javascript/jquery.ba-resize.min.js"></script>
+    
+    <script>
+    Ext.require(['*']);
+    Ext.onReady(function() {
+// Tạo data cho combobox
+var typeview = Ext.create('Ext.data.Store', {
+    fields: ['send', 'name'],
+    data : [
+        {"send":"h", "name":"Giờ"},
+        {"send":"d", "name":"Ngày"},
+        {"send":"m", "name":"Tháng"},
+        {"send":"raw", "name":"Raw"}
+    ]
+}),
+subs = Ext.create('Ext.data.Store', {
+    fields: ['send', 'name'],
+    data : [
+        {"send":"1", "name":"Metan"},
+        {"send":"2", "name":"NMHC"},
+        {"send":"3", "name":"Ozone"},
+        {"send":"4", "name":"CO"},
+        {"send":"5", "name":"SO2"},
+        {"send":"6", "name":"PM2.5"}
+    ]
+}),
+unit = Ext.create('Ext.data.Store', {
+    fields: ['send', 'name'],
+    data : [
+        {"send":"md", "name":"Mật độ"},
+        {"send":"si", "name":"SI"}
+    ]
+});
+
+var store = Ext.create('Ext.data.ArrayStore', {
+        fields: [
+           {name: 'time', type: 'date', dateFormat: 'Y-m-d H:i:s'},
+           {name: 'Metan', type: 'float'},
+           {name: 'NMHC', type: 'float'},
+           {name: 'Ozone', type: 'float'},
+           {name: 'SO2', type: 'float'},
+           {name: 'CO', type: 'float'},
+           {name: 'PM25', type: 'float'}
+           
+        ],
+        data: []
+    });
+    Ext.create('Ext.container.Viewport', {
+    layout: 'border',
+fontFamilies: 'Times New Roman',
+    items: [{
+        region: 'north',
+        html: '<h1 class="x-panel-header">SEP</h1>',
+        border: false,
+        margins: '0 0 5 0'
+    }, {
+        region: 'west',
+        collapsible: true,
+        title: 'Customize',
+        width: '18%',
+minWidth: 220,
+xtype: 'form',
+    bodyPadding: 5,
+id: 'form',
+    // The form will submit an AJAX request to this URL when submitted
+url: 'php/process.php',
+    // Fields will be arranged vertically, stretched to full width
+    layout: 'anchor',
+    defaults: {
+        anchor: '100%'
+    },
+
+    // The fields
+    items: [{
+xtype: 'datefield',
+        fieldLabel: 'Date',
+        name: 'date',
+format: 'Y/m/d',
+value: '2013/09/10',
+        allowBlank: false
+    },{
+xtype: 'timefield',
+        fieldLabel: 'Time',
+        name: 'time',
+submitValue: false,
+format: 'H:i',
+increment: 60,
+        allowBlank: true
+    },{
+xtype: 'combo',
+fieldLabel: 'Data type view',
+name: 'view',
+store: typeview,
+queryMode: 'local',
+displayField: 'name',
+valueField: 'send',
+value: 'h',
+        allowBlank: false
+
+},{
+xtype: 'combo',
+store: subs,
+id: 'subs',
+queryMode: 'local',
+fieldLabel: 'Substance',
+name: 'subs',
+displayField: 'name',
+value: '1',
+valueField: 'send'
+},{
+xtype: 'combo',
+fieldLabel: 'Unit',
+name: 'unit',
+store: unit,
+queryMode: 'local',
+displayField: 'name',
+value: 'md',
+valueField: 'send'
+}],
+
+    // Reset and Submit buttons
+    buttons: [{
+        text: 'Reset',
+        handler: function() {
+            this.up('form').getForm().reset();
+        }
+    }, {
+        text: 'Submit',
+        formBind: true, //only enabled once the form is valid
+        disabled: true,
+        handler: function() {
+            var form = this.up('form').getForm();
+            if (form.isValid()) {
+                form.submit({
+
+waitMsg: 'Sending the info...',
+                    success: function(form, action) {
+showdata(action.result.root, action.result.subs);
+store.loadData(action.result.root);
+$('#form-innerCt').append(form.findField('unit').getValue());
+/*vdata=action.result.root,
+$('#myDiv').text(vdata)*/
+                    },
+                    failure: function(form, action) {
+                        Ext.Msg.alert('Failed', 'Gửi thông tin thất bại');
+                    }
+                });
+            }
+        }
+    }]
+        // could use a TreePanel or AccordionLayout for navigational items
+    },{
+        region: 'east',
+        title: 'Bảng số liệu',
+titleAlign: 'center',
+        collapsible: true,
+        split: true,
+        width: '35%',
+xtype: 'grid',
+store: store,
+        stateful: true,
+id: 'mygrid',
+        stateId: 'stateGrid',
+        columns: [
+            {
+                text : 'Thời gian',
+                width : '27%',
+                sortable : true,
+                renderer : Ext.util.Format.dateRenderer('d/m/Y H:i:s'),
+                dataIndex: 'time'
+            },
+            {
+                text : 'Metan',
+                width : '12%',
+                sortable : true,
+                dataIndex: 'Metan'
+            },
+            {
+                text : 'NMHC',
+                width : '12%',
+                sortable : true,
+                dataIndex: 'NMHC'
+            },
+            {
+                text : 'Ozone',
+                width : '12%',
+                sortable : true,
+                dataIndex: 'Ozone'
+            },
+            {
+                text : 'CO',
+                width : '12%',
+                sortable : true,
+                dataIndex: 'CO'
+            },
+            {
+                text : 'SO2',
+                width : '12%',
+                sortable : true,
+                dataIndex: 'SO2'
+            },
+            {
+                text : 'PM25',
+                width : '12%',
+                sortable : true,
+                dataIndex: 'PM25'
+            },
+            
+        ],
+        viewConfig: {
+            stripeRows: true
+        }
+    }, {
+        region: 'center',
+        xtype: 'tabpanel', // TabPanel itself has no title
+        activeTab: 0, // First tab active by default
+items: [{
+title: 'Quan trắc không khí',
+id: 'chart'
+
+},{
+title: 'Dữ liệu khí tượng'
+}]
+    }],
+
+});
+       });
+
+        
+    
+
+//Phần code cho chart và các hiệu ứng
+options = {
+            chart: {
+                        type: 'spline',
+                        zoomType: 'x',
+                        style: {fontFamily: 'Roboto'}
+            },
+            title: {
+                        text: 'Nồng độ '+ name +' theo thời gian'
+                    },
+                    subtitle: {
+                        text: 'Maintain'
+                    },
+            xAxis: {
+                        type: 'datetime',
+                        dateTimeLabelFormats: { // don't display the dummy year
+                        month: '%e. %b',
+                        year: '%b'
+                    },
+                        title: {
+                            text: 'Thời gian'
+                        }
+            },
+            yAxis: {
+                title: {
+                    text: 'Nồng độ'
+                }
+            },
+            tooltip: {
+                        formatter: function() {
+                        return 'Thời gian: ' + Highcharts.dateFormat('%H:%M', this.x)+'<br/>'+
+                            'Nồng độ: '+ this.y;
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        
+                        series: {
+point: {
+events: {
+click: function(){
+var grid = Ext.getCmp('mygrid');
+grid.getView().focusRow(getId(this.x));
+}
+}
+},
+                            cursor: 'pointer'
+                        },
+                    },
+series: [{}],
+lang: {
+                        noData: "Không có số liệu theo yêu cầu"
+},
+noData: {
+style: {
+fontWeight: 'bold',
+fontSize: '20px',
+color: '#303030'
+}
+}
+        };
+function showdata(result,subs){
+options.series[0].data=[];
+
+for (var i=0;i<result.length;i++) {
+                        
+                        var jyea=result[i][0].substr(0,4);
+                        var jmon=result[i][0].substr(5,2)-1;
+                        var jday=result[i][0].substr(8,2);
+                        var jhou=result[i][0].substr(11,2);
+                        var jmin=result[i][0].substr(14,2);
+                        var jsec=result[i][0].substr(17,2);
+                        options.series[0].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),result[i][subs]]);
+                        
+                    }
+$('#chart-innerCt').highcharts(options);
+
+}
+function getId(value){
+var ar=options.series[0].data;
+for (var i=0;i<ar.length;i++){
+if (ar[i][0]==value) break;
+}
+return i;
+}
+window.onload = function(){ setTimeout(
+function(){
+$('#chart-innerCt').highcharts(options);
+        $('#chart-innerCt').resize(function(){
+            $('#chart-innerCt').highcharts(options);
+        });
+        }
+, 100); };
+
+    </script>
+</head>
+
+<body>
+    <script src="javascript/highcharts/highcharts.js"></script>
+    <script src="javascript/highcharts/no-data-to-display.js"></script>
+    <script src="javascript/highcharts/exporting.js"></script>
+
+
+</body>
+</html>

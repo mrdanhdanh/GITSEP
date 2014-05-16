@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <link href="http://localhost/js/resources/css/ext-all-neptune-debug.css" type="text/css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Roboto&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
+	<style>
+		
+	</style>
+    <script type="text/javascript" src="js/ext-all.js"></script>
+    <script src="javascript/jquery-2.1.1.min.js"></script>
+	<script src="javascript/jquery.ba-resize.min.js"></script>
+<script>
+Ext.require(['*']);
+Ext.onReady(function() {
+// Tạo data cho combobox
+var typeview = Ext.create('Ext.data.Store', {
+    fields: ['send', 'name'],
+    data : [
+        {"send":"h", "name":"Giờ"},
+        {"send":"d", "name":"Ngày"},
+        {"send":"m", "name":"Tháng"},
+        {"send":"raw", "name":"Raw"}
+    ]
+}),
+subs = Ext.create('Ext.data.Store', {
+    fields: ['send', 'name'],
+    data : [
+        {"send":"1", "name":"Metan"},
+        {"send":"2", "name":"NMHC"},
+        {"send":"3", "name":"Ozone"},
+        {"send":"4", "name":"CO"},
+        {"send":"5", "name":"SO2"},
+        {"send":"6", "name":"PM2.5"}
+    ]
+}),
+unit = Ext.create('Ext.data.Store', {
+    fields: ['send', 'name'],
+    data : [
+        {"send":"md", "name":"Mật độ"},
+        {"send":"si", "name":"SI"}
+    ]
+});
+Ext.create('Ext.form.Panel', {
+    title: 'Simple Form',
+    bodyPadding: 5,
+    width: 350,
+
+    // The form will submit an AJAX request to this URL when submitted
+	url: 'test.php',
+    // Fields will be arranged vertically, stretched to full width
+    layout: 'anchor',
+    defaults: {
+        anchor: '100%'
+    },
+	
+    // The fields
+    items: [{
+		xtype: 'datefield',
+        fieldLabel: 'Date',
+        name: 'date',
+        allowBlank: false
+    },{
+		xtype: 'timefield',
+        fieldLabel: 'Time',
+        name: 'time',
+		format: 'H:i',
+		increment: 60,
+        allowBlank: false
+    },{
+		xtype: 'combo',
+		fieldLabel: 'Data type view',
+		name: 'view',
+		store: typeview,
+		queryMode: 'local',
+		displayField: 'name',
+		valueField: 'send'
+	},{
+		xtype: 'combo',
+		fieldLabel: 'Substance',
+		name: 'subs',
+		store: subs,
+		queryMode: 'local',
+		displayField: 'name',
+		valueField: 'send'
+	},{
+		xtype: 'combo',
+		fieldLabel: 'Unit',
+		name: 'unit',
+		store: unit,
+		queryMode: 'local',
+		displayField: 'name',
+		valueField: 'send'
+	}],
+
+    // Reset and Submit buttons
+    buttons: [{
+        text: 'Reset',
+        handler: function() {
+            this.up('form').getForm().reset();
+        }
+    }, {
+        text: 'Submit',
+        formBind: true, //only enabled once the form is valid
+        disabled: true,
+        handler: function() {
+            var form = this.up('form').getForm();
+            if (form.isValid()) {
+                form.submit({
+					
+					waitMsg: 'Sending the info...', 
+                    success: function(form, action) {
+						Ext.Msg.alert('Success', 'Gửi thông tin thành công');
+						vdata=action.result.root,
+						$('#myDiv').text(vdata)
+                    },
+                    failure: function(form, action) {
+                        Ext.Msg.alert('Failed', 'Gửi thông tin thất bại');
+                    }
+                });
+            }
+        }
+    }],
+    renderTo: Ext.getBody()
+});
+});
+</script>
+</head>
+<body>
+
+<button>Get JSON data</button>
+<div id='myDiv'></div>
+
+</body>
+</html>

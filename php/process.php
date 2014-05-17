@@ -14,48 +14,49 @@ $stat = pg_connection_status($db_conn);
   }
   */
 //Set some variables
-$view=$_POST["view"];
-if (substr($_POST["date"],0,4) <> "")
-{
-    $time=substr($_POST["date"],0,4);
-    $timeview="YYYY";
-    if (substr($_POST["date"],5,2)<> "")
-    {
-        $time.="-".substr($_POST["date"],5,2);
-        $timeview="YYYY-MM";
-        if (substr($_POST["date"],8,2) <> "")
-        {
-            $time.="-".substr($_POST["date"],8,2);
-            $timeview="YYYY-MM-DD";
-            /*if ($_POST["time"]<>null)
-            {   
-                $time.=" ".substr($_POST["time"],0,2);;
-                $timeview="YYYY-MM-DD HH24";
-            };*/};};};
-
-
-
+$date=$_POST["date"];
+if (empty($_POST["time"])==false) $time=$_POST["time"];
 //Collect data value
-switch ($view)
+switch ($_POST["view"])
 {
+    case "raw":
+        $dataview="air_quality_data_raw";
+        $dateview="YYYY/MM/DD";
+        break;
+    case "1p":
+        $dataview="air_quality_data_1min";
+        $dateview="YYYY/MM/DD";
+        break;
     case "5p":
         $dataview="air_quality_data_5min";
+        $dateview="YYYY/MM/DD";
         break;
-    case "raw":
-        $dataview="data_raw";
-        break;
+    case "15p":
+        $dataview="air_quality_data_5min";
+        $dateview="YYYY/MM/DD";
+        break;    
     case "h":
-        $dataview="data_one_hour";
+        $dataview="air_quality_data_60min";
         break;
     case "d":
-        $dataview="data_one_day";
+        $dataview="air_quality_data_day";
+        $time=substr($time,0,7);
+        $timeview="YYYY-MM";
+        break;
+    case "w":
+        $dataview="air_quality_data_week";
+        $time=substr($time,0,7);
+        $timeview="YYYY-MM";
+        break;
+    case "m":
+        $dataview="air_quality_data_month";
         $time=substr($time,0,7);
         $timeview="YYYY-MM";
         break;
     dafault:
         $dataview="data_raw";
 }
-$result = pg_query($db_conn, "SELECT * FROM $dataview WHERE to_char(date,'$timeview')='$time' ORDER BY date");
+$result = pg_query($db_conn, "SELECT * FROM $dataview WHERE to_char(date,'$dateview')='$date' ORDER BY date");
 $count=0;
 $countchart=0;
 $total=0;

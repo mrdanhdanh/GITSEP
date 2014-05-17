@@ -244,12 +244,18 @@
             });
         });
 
+        
 //Phần code cho chart và các hiệu ứng
+//Tạo options cho chart
 options = {
     chart: {
         type: 'spline',
         zoomType: 'x',
         style: {fontFamily: 'Roboto'}
+    },
+    credits: {
+        enabled: true,
+        text: 'SEP'
     },
     title: {
         text: 'Nồng độ '+ name +' theo thời gian'
@@ -286,6 +292,17 @@ options = {
     },
     plotOptions: {                         
         series: {
+            allowPointSelect: true,
+            marker: {
+                enabled: true,
+                states: {
+                    select: {
+                        fillColor: '#f500ff',
+                        lineColor: '#f500ff',
+                        lineWidth: '3px'
+                    }
+                }
+            },
             point: {
                 events: {
                     click: function(){
@@ -293,9 +310,12 @@ options = {
                         grid.getView().focusRow(getId(this.x));
                     }
                 }
+                
             },
-            cursor: 'pointer'
+            cursor: 'pointer',
+            turboThreshold: 100
         },
+
     },
     series: [{}],
     lang: {
@@ -320,7 +340,33 @@ options = {
             var jsec=result[i][1].substr(6,2);
             options.series[0].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),result[i][subs]]);                        
         }
-    $('#chart-innerCt').highcharts(options);
+    drawchartaqi();
+    }
+    function drawchartaqi(){
+        $('#chart-innerCt').highcharts(options,
+    function(chart) {
+        var text = chart.renderer.text(
+                'AQI = ', 
+                chart.plotLeft + 10, 
+                chart.plotTop + 50
+            ).attr({
+                zIndex: 5
+            }).css({
+                color: '#000',
+                fontSize: '16px'
+            }).add();
+        
+        var box = text.getBBox();
+        chart.renderer.rect(box.x - 5, box.y - 5, box.width + 10, box.height + 10, 0)
+            .attr({
+                fill: 'rgb(0, 177, 255)',
+                stroke: 'rgba(0, 140, 255, 0.76)',
+                'stroke-width': 1,
+                zIndex: 4
+            })
+            .add();
+        
+    });
     }
     function getId(value){  
         var ar=options.series[0].data;
@@ -333,7 +379,7 @@ options = {
             function(){
                 $('#chart-innerCt').highcharts(options);
                 $('#chart-innerCt').resize(function(){
-                    $('#chart-innerCt').highcharts(options);
+                    $('#chart-innerCt').highcharts().reflow();
                 });
             }
             , 100); };

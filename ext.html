@@ -251,10 +251,34 @@ options = {
     chart: {
         type: 'spline',
         zoomType: 'x',
-        style: {fontFamily: 'Roboto'}
+        style: {fontFamily: 'Roboto'},
+        selectionMarkerFill: 'rgba(151, 224, 135, 0.25)',
+        resetZoomButton: {
+                position: {
+                    // align: 'right', // by default
+                    // verticalAlign: 'top', // by default
+                    x: -10,
+                    y: 80
+                },
+                relativeTo: 'chart',
+                theme: {
+                    fill: 'white',
+                    stroke: 'silver',
+                    r: 5,
+                    states: {
+                        hover: {
+                            fill: '#00a512',
+                            style: {
+                                color: 'white'
+                            }
+                        }
+                    }
+                }
+        }
     },
     credits: {
         enabled: true,
+        href: 'localhost/GITSEP/ext.html',
         text: 'SEP'
     },
     title: {
@@ -265,10 +289,16 @@ options = {
     },
     xAxis: {
         type: 'datetime',
-        dateTimeLabelFormats: { // don't display the dummy year
-            month: '%e. %b',
-            year: '%b'
-        },
+        dateTimeLabelFormats: {
+	millisecond: '%H:%M:%S.%L',
+	second: '%H:%M:%S',
+	minute: '%H:%M',
+	hour: '%H:%M',
+	day: '%e. %b',
+	week: '%e. %b',
+	month: '%b \'%y',
+	year: '%Y'
+},
         title: {
             text: 'Thời gian'
         }
@@ -279,6 +309,8 @@ options = {
         }
     },
     tooltip: {
+        enabled: true,
+        hideDelay: 100,
         formatter: function() {
             return 'Thời gian: ' + Highcharts.dateFormat('%H:%M', this.x)+'<br/>'+
                 'Nồng độ: '+ this.y;
@@ -288,7 +320,7 @@ options = {
         enabled: false
     },
     exporting: {
-        enabled: false
+        enabled: true
     },
     plotOptions: {                         
         series: {

@@ -12,7 +12,7 @@
     <script src="javascript/highcharts/no-data-to-display.js"></script>
     <script src="javascript/highcharts/exporting.js"></script>
     <script>
-        Ext.require(['*']); //Khai báo các thành pha62n2 cần load cho web, chọn '*' để load tất cả
+        Ext.require(['*']); //Khai báo các thành phần cần load cho module extls, chọn '*' để load tất cả
         Ext.onReady(function() {
             // Tạo data cho combobox
             var typeview = Ext.create('Ext.data.Store', {
@@ -46,12 +46,15 @@
                     ]
                 });
             // Tạo khung data grid
-            var store = Ext.create('Ext.data.ArrayStore', {
+            store = Ext.create('Ext.data.ArrayStore', {
                 fields: [
                     {name: 'date', type: 'date', dateFormat: 'Y-m-d'},
                     {name: 'time', type: 'date', dateFormat: 'H:i:s'},
                     {name: 'Metan', type: 'float'},
                     {name: 'NMHC', type: 'float'},
+                    {name: 'NO', type: 'float'},
+                    {name: 'NO2', type: 'float'},
+                    {name: 'NOx', type: 'float'},
                     {name: 'Ozone', type: 'float'},
                     {name: 'SO2', type: 'float'},
                     {name: 'CO', type: 'float'},
@@ -71,6 +74,8 @@
                 }, {
                     region: 'west', //Phía bên trái
                     collapsible: true,
+                    collapsed: true,
+                    split: true,
                     title: 'Customize',
                     width: '18%',
                     minWidth: 220,
@@ -166,7 +171,8 @@
                     titleAlign: 'center',
                     collapsible: true,
                     split: true,
-                    width: '35%',
+                    width: '55%',
+                    minWidth: 751,
                     xtype: 'grid',
                     store: store,
                     stateful: true,
@@ -175,66 +181,188 @@
                     columns: [
                         {
                             text : 'Ngày',
-                            width : '14%',
+                            minWidth : 90,
                             sortable : true,
                             renderer : Ext.util.Format.dateRenderer('d/m/Y'),
                             dataIndex: 'date'
-                        },
-                        {
+                        },{
                             text : 'Thời gian',
-                            width : '14%',
+                            minWidth : 90,
                             sortable : true,
                             renderer : Ext.util.Format.dateRenderer('H:i:s'),
                             dataIndex: 'time'
-                        },
-                        {
+                        },{
                             text : 'Metan',
-                            width : '12%',
+                            minWidth :60,
+                            width : '7%',
                             sortable : true,
-                            dataIndex: 'Metan'
-                        },
-                        {
+                            dataIndex: 'Metan',
+                            editor: {
+                                xtype: 'textfield',
+                                allowBlank: false
+                            }
+                        },{
                             text : 'NMHC',
-                            width : '12%',
+                            minWidth :60,
+                            width : '7%',
                             sortable : true,
-                            dataIndex: 'NMHC'
-                        },
-                        {
+                            dataIndex: 'NMHC',
+                            editor: {
+                                xtype: 'textfield',
+                                allowBlank: false
+                            }
+                        },{
+                            text : 'NO',
+                            minWidth :60,
+                            width : '7%',
+                            sortable : true,
+                            dataIndex: 'NO',
+                            editor: {
+                                xtype: 'textfield',
+                                allowBlank: false
+                            }
+                        },{
+                            text : 'NO2',
+                            minWidth :60,
+                            width : '7%',
+                            sortable : true,
+                            dataIndex: 'NO2',
+                            editor: {
+                                xtype: 'textfield',
+                                allowBlank: false
+                            }
+                        },{
+                            text : 'NOx',
+                            minWidth :60,
+                            width : '7%',
+                            sortable : true,
+                            dataIndex: 'NOx',
+                            editor: {
+                                xtype: 'textfield',
+                                allowBlank: false
+                            }
+                        },{
                             text : 'Ozone',
-                            width : '12%',
+                            minWidth :60,
+                            width : '7%',
                             sortable : true,
-                            dataIndex: 'Ozone'
-                        },
-                        {
+                            dataIndex: 'Ozone',
+                            editor: {
+                                xtype: 'textfield',
+                                allowBlank: false
+                            }
+                        },{
                             text : 'CO',
-                            width : '12%',
+                            width : '7%',
                             sortable : true,
-                            dataIndex: 'CO'
-                        },
-                        {
+                            dataIndex: 'CO',
+                            editor: {
+                                xtype: 'textfield',
+                                allowBlank: false
+                            }
+                        },{
                             text : 'SO2',
-                            width : '12%',
+                            minWidth :60,
+                            width : '7%',
                             sortable : true,
-                            dataIndex: 'SO2'
+                            dataIndex: 'SO2',
+                            editor: {
+                                xtype: 'textfield',
+                                allowBlank: false
+                            }
                         },
                         {
                             text : 'PM25',
-                            width : '12%',
+                            minWidth :60,
+                            width : '7%',
                             sortable : true,
-                            dataIndex: 'PM25'
-                        },
+                            dataIndex: 'PM25',
+                            editor: {
+                                xtype: 'textfield',
+                                allowBlank: false
+                            }
+                        }],
+                        selType: 'rowmodel',
+                        plugins: [
+        Ext.create('Ext.grid.plugin.RowEditing', {
+            autoCancel: false,
+            clicksToEdit: 2
             
-                    ],
+        })
+    ],
                         viewConfig: {
                         stripeRows: true
                         }
                         },{
                         region: 'center',
+                        minWidth: 300,
                         xtype: 'tabpanel', // TabPanel itself has no title
                         activeTab: 0, // First tab active by default
+                        
                         items: [{
                         title: 'Quan trắc không khí',
-                        id: 'chart'
+                        layout: 'border',
+                        items:[{
+                            region: 'center',
+                            id: 'chart'
+                        },{
+                            region: 'south',
+                            height: 30,
+                            layout: {
+                                type: 'hbox',
+                                align: 'middle',
+                                pack: 'center'
+                            },
+                            xtype      : 'fieldcontainer',
+            defaultType: 'radiofield',
+            defaults: {
+                flex: 0,
+                
+                        
+            },
+
+            
+            items: [
+                {
+                    name      : 'size',
+                    inputValue: 'm',
+                    id        : 'radio1'
+                }, {
+                    name      : 'size',
+                    inputValue: 'l',
+                    id        : 'radio2'
+                }, {
+                    name      : 'size',
+                    inputValue: 'xl',
+                    id        : 'radio3'
+                },{
+                    name      : 'size',
+                    inputValue: 'm',
+                    id        : 'radio4'
+                }, {
+                    name      : 'size',
+                    inputValue: 'l',
+                    id        : 'radio5'
+                }, {
+                    name      : 'size',
+                    inputValue: 'xl',
+                    id        : 'radio6'
+                },{
+                    name      : 'size',
+                    inputValue: 'm',
+                    id        : 'radio7'
+                }, {
+                    name      : 'size',
+                    inputValue: 'l',
+                    id        : 'radio8'
+                }, {
+                    name      : 'size',
+                    inputValue: 'xl',
+                    id        : 'radio9'
+                }
+            ]
+                        }]
+                        
 
                         },{
                             title: 'Dữ liệu khí tượng'
@@ -276,9 +404,10 @@ options = {
                 }
         }
     },
+    
     credits: {
         enabled: true,
-        href: 'localhost/GITSEP/ext.html',
+        href: 'ext.html',
         text: 'SEP'
     },
     title: {
@@ -339,7 +468,7 @@ options = {
                 events: {
                     click: function(){
                         var grid = Ext.getCmp('mygrid');
-                        grid.getView().focusRow(getId(this.x));
+                        grid.getView().focusRow(getId(this.x),10);
                     }
                 }
                 
@@ -361,6 +490,9 @@ options = {
         }
     }
 };
+</script>
+    <script>
+        // Các function khác
     function showdata(result,subs){
         options.series[0].data=[];
         for (var i=0;i<result.length;i++) {
@@ -413,8 +545,11 @@ options = {
                 $('#chart-innerCt').resize(function(){
                     $('#chart-innerCt').highcharts().reflow();
                 });
+                
             }
             , 100); };
+        
+                                
     </script>
 </head>
 

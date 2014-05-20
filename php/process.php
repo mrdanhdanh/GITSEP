@@ -32,7 +32,7 @@ switch ($_POST["view"])
         $dateview="YYYY/MM/DD";
         break;
     case "15p":
-        $dataview="air_quality_data_5min";
+        $dataview="air_quality_data_15min";
         $dateview="YYYY/MM/DD";
         break;    
     case "h":
@@ -66,7 +66,7 @@ while ($row = pg_fetch_array($result)) {
     $data[$count][1]=$row[2];
 
     for ($i=2;$i<=10;$i++) {
-        $data[$count][$i]=round($row[$i+1],3);
+        $data[$count][$i]=round($row[$i+1],4);
     }
     $count++;
 }

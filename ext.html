@@ -60,12 +60,8 @@
                     {name: 'CO', type: 'float'},
                     {name: 'PM25', type: 'float'}
                 ],
-                data: [], //Data blank, khi truy cập vào trang web sẽ thấy bảng trống
-                reader: {
-                    type: 'array'
-                }
+                data: [] //Data blank, khi truy cập vào trang web sẽ thấy bảng trống
             });
-            
             // Tạo viewport
             Ext.create('Ext.container.Viewport', {
                 layout: 'border',
@@ -159,13 +155,6 @@
                     success: function(form, action) {
                         showdata(action.result.root, action.result.subs);
                         store.loadData(action.result.root);
-                        
-                        var grid = Ext.getCmp('mygrid');
-                        setTimeout(function(){grid.getView().focusRow(1,5000);}, 3000);
-                        
-                        
-                        
-                        
                         $('#form-innerCt').append(form.findField('unit').getValue());
                     },
                     failure: function(form, action) {
@@ -293,11 +282,7 @@
                                 allowBlank: false
                             }
                         }],
-                         bbar: {
-                xtype: 'pagingtoolbar',
-                store: store,
-                displayInfo: true
-                         },
+                        selType: 'rowmodel',
                         plugins: [
         Ext.create('Ext.grid.plugin.RowEditing', {
             autoCancel: false,
@@ -550,7 +535,7 @@ options = {
     function getId(value){  
         var ar=options.series[0].data;
         for (var i=0;i<ar.length;i++){
-            if (ar[i][0]==value || ar[i].x==value) break;
+            if (ar[i][0]==value) break;
         }
         return i;
     }

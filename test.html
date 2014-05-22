@@ -1,130 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
-    <link href="http://localhost/js/resources/css/ext-all-neptune-debug.css" type="text/css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title></title>
+    <link href="css/ext-theme-neptune-all-debug.css" type="text/css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Roboto&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
-	<style>
-		
-	</style>
-    <script type="text/javascript" src="js/ext-all.js"></script>
+    <script type="text/javascript" src="javascript/ext-all.js"></script>
     <script src="javascript/jquery-2.1.1.min.js"></script>
-	<script src="javascript/jquery.ba-resize.min.js"></script>
-<script>
+    <script src="javascript/jquery.ba-resize.min.js"></script>
+    <script src="javascript/highcharts/highcharts.js"></script>
+    <script src="javascript/highcharts/no-data-to-display.js"></script>
+    <script src="javascript/highcharts/exporting.js"></script>
+    <script>
+
 Ext.require(['*']);
-Ext.onReady(function() {
-// Tạo data cho combobox
-var typeview = Ext.create('Ext.data.Store', {
-    fields: ['send', 'name'],
-    data : [
-        {"send":"h", "name":"Giờ"},
-        {"send":"d", "name":"Ngày"},
-        {"send":"m", "name":"Tháng"},
-        {"send":"raw", "name":"Raw"}
-    ]
-}),
-subs = Ext.create('Ext.data.Store', {
-    fields: ['send', 'name'],
-    data : [
-        {"send":"1", "name":"Metan"},
-        {"send":"2", "name":"NMHC"},
-        {"send":"3", "name":"Ozone"},
-        {"send":"4", "name":"CO"},
-        {"send":"5", "name":"SO2"},
-        {"send":"6", "name":"PM2.5"}
-    ]
-}),
-unit = Ext.create('Ext.data.Store', {
-    fields: ['send', 'name'],
-    data : [
-        {"send":"md", "name":"Mật độ"},
-        {"send":"si", "name":"SI"}
-    ]
+
+
+
+Ext.onReady(function(){
+    Ext.tip.QuickTipManager.init();
+var itemsPerPage = 2;   // set the number of items you want per page
+
+var store = Ext.create('Ext.data.Store', {
+    id:'simpsonsStore',
+
+    fields: [
+                    {name: 'date', type: 'date', dateFormat: 'Y-m-d'},
+                    {name: 'time', type: 'date', dateFormat: 'H:i:s'},
+                    {name: 'Metan', type: 'float'},
+                    {name: 'NMHC', type: 'float'},
+                    {name: 'NO', type: 'float'},
+                    {name: 'NO2', type: 'float'},
+                    {name: 'NOx', type: 'float'},
+                    {name: 'Ozone', type: 'float'},
+                    {name: 'SO2', type: 'float'},
+                    {name: 'CO', type: 'float'},
+                    {name: 'PM25', type: 'float'}
+                ],
+     
+    data: [["2013-09-10","00:01:00",2.2911,0.1004,0,0,0,39.78,3.904,-1.959,1.4],["2013-09-10","00:06:00",2.2668,0.1004,0,0,0,49.96,4.1923,-1.959,1.5],["2013-09-10","00:11:00",2.2668,0.0958,0,0,0,49.42,4.1923,-1.959,1.2],["2013-09-10","00:16:00",2.3008,0.0866,0,0,0,24.84,3.904,-1.959,5.4],["2013-09-10","00:21:00",2.3008,0.0958,0,0,0,37.74,4.1923,-1.959,4.9],["2013-09-10","00:26:00",2.2814,0.1004,0,0,0,27.84,4.0001,-1.959,4.2],["2013-09-10","00:31:00",2.2959,0.0866,0,0,0,26,3.904,-1.959,6.9],["2013-09-10","00:36:00",2.3105,0.0866,0,0,0,37.58,3.904,-1.963,6.4],["2013-09-10","00:41:00",2.3494,0.1096,0,0,0,15.06,3.904,-1.959,8.3],["2013-09-10","00:46:00",2.3348,0.1509,0,0,0,34.68,4.3845,-1.963,9.8],["2013-09-10","00:51:00",2.3397,0.1234,0,0,0,15.28,4.0001,-1.959,11.2],["2013-09-10","00:56:00",2.2862,0.082,0,0,0,22.78,4.0001,-1.959,7.3],["2013-09-10","01:01:00",2.2959,0.0866,0,0,0,22.08,3.904,-1.959,6.1],["2013-09-10","01:06:00",2.3154,0.0912,0,0,0,8.36,3.904,-1.959,5.1],["2013-09-10","01:11:00",2.2862,0.1004,0,0,0,30.32,4.0001,-1.959,4.9],["2013-09-10","01:16:00",2.3154,0.1234,0,0,0,5.5,4.0001,-1.959,4.9],["2013-09-10","01:21:00",2.3154,0.128,0,0,0,24.58,3.904,-1.963,4.9],["2013-09-10","01:26:00",2.3008,0.1188,0,0,0,13.46,4.0001,-1.959,5.6],["2013-09-10","01:31:00",2.2862,0.1004,0,0,0,13.88,3.904,-1.959,11.7],["2013-09-10","01:36:00",2.2716,0.0912,0,0,0,26.18,4.0001,-1.959,14.4],["2013-09-10","01:41:00",2.3008,0.0958,0,0,0,5.96,3.7118,-1.959,14.6],["2013-09-10","01:46:00",2.2959,0.1142,0,0,0,29.44,3.7118,-1.959,15.3],["2013-09-10","01:51:00",2.33,0.0774,0,0,0,9.16,3.7118,-1.959,17.6],["2013-09-10","01:56:00",2.3591,0.0636,0,0,0,23.92,3.4235,-1.959,16.1],["2013-09-10","02:01:00",2.3786,0.0866,0,0,0,21.4,3.7118,-1.959,16.3],["2013-09-10","02:06:00",2.3445,0.0774,0,0,0,9.1,3.6157,-1.963,16.5],["2013-09-10","02:11:00",2.2668,0.0682,0,0,0,31.98,3.4235,-1.959,16.1],["2013-09-10","02:16:00",2.2473,0.0682,0,0,0,6.3,3.4235,-1.959,11.7],["2013-09-10","02:21:00",2.223,0.0544,0,0,0,29.26,3.4235,-1.959,8.6]],
+    pageSize: itemsPerPage // items per page
+    
 });
-Ext.create('Ext.form.Panel', {
-    title: 'Simple Form',
-    bodyPadding: 5,
-    width: 350,
 
-    // The form will submit an AJAX request to this URL when submitted
-	url: 'test.php',
-    // Fields will be arranged vertically, stretched to full width
-    layout: 'anchor',
-    defaults: {
-        anchor: '100%'
-    },
-	
-    // The fields
-    items: [{
-		xtype: 'datefield',
-        fieldLabel: 'Date',
-        name: 'date',
-        allowBlank: false
-    },{
-		xtype: 'timefield',
-        fieldLabel: 'Time',
-        name: 'time',
-		format: 'H:i',
-		increment: 60,
-        allowBlank: false
-    },{
-		xtype: 'combo',
-		fieldLabel: 'Data type view',
-		name: 'view',
-		store: typeview,
-		queryMode: 'local',
-		displayField: 'name',
-		valueField: 'send'
-	},{
-		xtype: 'combo',
-		fieldLabel: 'Substance',
-		name: 'subs',
-		store: subs,
-		queryMode: 'local',
-		displayField: 'name',
-		valueField: 'send'
-	},{
-		xtype: 'combo',
-		fieldLabel: 'Unit',
-		name: 'unit',
-		store: unit,
-		queryMode: 'local',
-		displayField: 'name',
-		valueField: 'send'
-	}],
+// specify segment of data you want to load using params
+store.load({
+    params:{
+        start:0,
+        limit: itemsPerPage
+    }
+});
 
-    // Reset and Submit buttons
-    buttons: [{
-        text: 'Reset',
-        handler: function() {
-            this.up('form').getForm().reset();
-        }
-    }, {
-        text: 'Submit',
-        formBind: true, //only enabled once the form is valid
-        disabled: true,
-        handler: function() {
-            var form = this.up('form').getForm();
-            if (form.isValid()) {
-                form.submit({
-					
-					waitMsg: 'Sending the info...', 
-                    success: function(form, action) {
-						Ext.Msg.alert('Success', 'Gửi thông tin thành công');
-						vdata=action.result.root,
-						$('#myDiv').text(vdata)
-                    },
-                    failure: function(form, action) {
-                        Ext.Msg.alert('Failed', 'Gửi thông tin thất bại');
-                    }
-                });
-            }
-        }
+Ext.create('Ext.grid.Panel', {
+    title: 'Simpsons',
+    store: store,
+    columns: [
+                        {
+                            text : 'Ngày',
+                           
+                            dataIndex: 'date'
+                        },{
+                            text : 'Thời gian',
+                    
+                            dataIndex: 'time'
+                        },{
+                            text : 'Metan',
+                     
+                            dataIndex: 'Metan',
+                           
+                        },{
+                            text : 'NMHC',
+                            
+                            dataIndex: 'NMHC',
+                            
+                        },{
+                            text : 'NO',
+                            
+                            dataIndex: 'NO',
+                           
+                        },{
+                            text : 'NO2',
+                            
+                            dataIndex: 'NO2',
+                            
+                        },{
+                            text : 'NOx',
+                            
+                            dataIndex: 'NOx',
+                            
+                        },{
+                            text : 'Ozone',
+                          
+                            dataIndex: 'Ozone',
+                           
+                        },{
+                            text : 'CO',
+                            
+                            dataIndex: 'CO',
+                            
+                        },{
+                            text : 'SO2',
+                          
+                            dataIndex: 'SO2',
+                            
+                        },
+                        {
+                            text : 'PM25',
+                            
+                            dataIndex: 'PM25',
+                           
+                        }],
+    dockedItems: [{
+        xtype: 'pagingtoolbar',
+        store: store,   // same store GridPanel is using
+        dock: 'bottom',
+        displayInfo: true
     }],
     renderTo: Ext.getBody()
 });
+    
 });
+
 </script>
 </head>
 <body>

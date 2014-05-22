@@ -12,7 +12,7 @@
     <script src="javascript/highcharts/no-data-to-display.js"></script>
     <script src="javascript/highcharts/exporting.js"></script>
     <script>
-        Ext.require(['*']); //Khai báo các thành phần cần load cho module extls, chọn '*' để load tất cả
+        Ext.require(['*', 'Ext.toolbar.Paging']); //Khai báo các thành phần cần load cho module extls, chọn '*' để load tất cả
         Ext.onReady(function() {
             // Tạo data cho combobox
             var typeview = Ext.create('Ext.data.Store', {
@@ -46,6 +46,7 @@
                     ]
                 });
             // Tạo khung data grid
+            var itemsPerPage=20;
             store = Ext.create('Ext.data.ArrayStore', {
                 fields: [
                     {name: 'date', type: 'date', dateFormat: 'Y-m-d'},
@@ -60,8 +61,23 @@
                     {name: 'CO', type: 'float'},
                     {name: 'PM25', type: 'float'}
                 ],
-                data: [] //Data blank, khi truy cập vào trang web sẽ thấy bảng trống
+                proxy: {
+                type: 'memory',
+                enablePaging: true,
+                data: [],
+                reader: {
+                    type: 'array'
+                }
+            },
+                //Data blank, khi truy cập vào trang web sẽ thấy bảng trống
+                pageSize: itemsPerPage
             });
+            store.load({
+    params:{
+        start:0,
+        limit: itemsPerPage
+    }
+});
             // Tạo viewport
             Ext.create('Ext.container.Viewport', {
                 layout: 'border',
@@ -154,7 +170,8 @@
                     waitMsg: 'Đang chuyển yêu cầu...',
                     success: function(form, action) {
                         showdata(action.result.root, action.result.subs);
-                        store.loadData(action.result.root);
+                        store.proxy.data=action.result.root;
+                        Ext.getCmp('paging').doRefresh();
                         $('#form-innerCt').append(form.findField('unit').getValue());
                     },
                     failure: function(form, action) {
@@ -282,6 +299,13 @@
                                 allowBlank: false
                             }
                         }],
+                                             bbar: {
+                xtype: 'pagingtoolbar',
+                                                 id: 'paging',
+                store: store,
+                displayInfo: true
+                         },
+
                         selType: 'rowmodel',
                         plugins: [
         Ext.create('Ext.grid.plugin.RowEditing', {
@@ -370,6 +394,7 @@
                 }],
 
             });
+            store.loadPage(1);
         });
 
         
@@ -535,7 +560,7 @@ options = {
     function getId(value){  
         var ar=options.series[0].data;
         for (var i=0;i<ar.length;i++){
-            if (ar[i][0]==value) break;
+            if (ar[i][0]==value || ar[i].x==value) break;
         }
         return i;
     }

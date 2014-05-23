@@ -1,5 +1,6 @@
- Ext.require(['*']); //Khai báo các thành phần cần load cho module extls, chọn '*' để load tất cả
-        Ext.onReady(function() {
+Ext.require(['*']); //Khai báo các thành phần cần load cho module extls, chọn '*' để load tất cả
+Ext.onReady(function() {
+    var updatearray=[];
             // Tạo data cho combobox
             var typeview = Ext.create('Ext.data.Store', {
                 fields: ['send', 'name'],
@@ -33,7 +34,7 @@
                 });
             // Tạo khung data grid
             var itemsPerPage=20;
-            var store = Ext.create('Ext.data.ArrayStore', {
+            store = Ext.create('Ext.data.ArrayStore', {
                 fields: [
                     {name: 'date', type: 'date', dateFormat: 'Y-m-d'},
                     {name: 'time', type: 'date', dateFormat: 'H:i:s'},
@@ -175,7 +176,7 @@
                     collapsible: true,
                     split: true,
                     width: '50%',
-                    
+                    minWidth: 530,
                     xtype: 'grid',
                     store: store,
                     stateful: true,
@@ -186,14 +187,13 @@
                             text : 'Ngày',
                             minWidth : 90,
                             sortable : true,
-                            locked: true,
+                 
                             renderer : Ext.util.Format.dateRenderer('d/m/Y'),
                             dataIndex: 'date'
                         },{
                             text : 'Thời gian',
                             minWidth : 90,
                             sortable : true,
-                            locked: true,
                             renderer : Ext.util.Format.dateRenderer('H:i:s'),
                             dataIndex: 'time'
                         },{
@@ -201,10 +201,11 @@
                             minWidth :60,
                             width : '7%',
                             sortable : true,
-                            lockable: false,
+                            
                             dataIndex: 'Metan',
                             editor: {
-                                xtype: 'textfield',
+                                xtype: 'numberfield',
+                                decimalPrecision: 4,
                                 allowBlank: false
                             }
                         },{
@@ -214,7 +215,8 @@
                             sortable : true,
                             dataIndex: 'NMHC',
                             editor: {
-                                xtype: 'textfield',
+                                xtype: 'numberfield',
+                                decimalPrecision: 4,
                                 allowBlank: false
                             }
                         },{
@@ -224,7 +226,8 @@
                             sortable : true,
                             dataIndex: 'NO',
                             editor: {
-                                xtype: 'textfield',
+                                xtype: 'numberfield',
+                                decimalPrecision: 4,
                                 allowBlank: false
                             }
                         },{
@@ -234,7 +237,8 @@
                             sortable : true,
                             dataIndex: 'NO2',
                             editor: {
-                                xtype: 'textfield',
+                                xtype: 'numberfield',
+                                decimalPrecision: 4,
                                 allowBlank: false
                             }
                         },{
@@ -244,7 +248,8 @@
                             sortable : true,
                             dataIndex: 'NOx',
                             editor: {
-                                xtype: 'textfield',
+                                xtype: 'numberfield',
+                                decimalPrecision: 4,
                                 allowBlank: false
                             }
                         },{
@@ -254,7 +259,8 @@
                             sortable : true,
                             dataIndex: 'Ozone',
                             editor: {
-                                xtype: 'textfield',
+                                xtype: 'numberfield',
+                                decimalPrecision: 4,
                                 allowBlank: false
                             }
                         },{
@@ -264,7 +270,8 @@
                             sortable : true,
                             dataIndex: 'CO',
                             editor: {
-                                xtype: 'textfield',
+                                xtype: 'numberfield',
+                                decimalPrecision: 4,
                                 allowBlank: false
                             }
                         },{
@@ -274,7 +281,8 @@
                             sortable : true,
                             dataIndex: 'SO2',
                             editor: {
-                                xtype: 'textfield',
+                                xtype: 'numberfield',
+                                decimalPrecision: 4,
                                 allowBlank: false
                             }
                         },
@@ -285,22 +293,66 @@
                             sortable : true,
                             dataIndex: 'PM25',
                             editor: {
-                                xtype: 'textfield',
+                                xtype: 'numberfield',
+                                decimalPrecision: 4,
                                 allowBlank: false
                             }
                         }],
-                    bbar: {
+                    buttons: {
+                        layout:{
+                            buttonAlign: 'right',
+                        },                        
+                        padding: '0 0 0 0',
+                        items:[{
                         xtype: 'pagingtoolbar',
                         id: 'paging',
+                        beforePageText: 'Trang',
+                        afterPageText: 'trên {0}',
                         store: store,
+                            
                         displayInfo: true
-                    },
-
+                    },{
+                        xtype: 'button',
+                        text: 'Submit',
+                        
+                        scale: 'medium'
+                }]
+                             },
                         selType: 'rowmodel',
                         plugins: [
         Ext.create('Ext.grid.plugin.RowEditing', {
             autoCancel: false,
-            clicksToEdit: 2
+            clicksToEdit: 2,
+            listeners: {
+                edit: { // Edit dự liệu trong grid
+                    fn: function(editor,e){
+                        //var date=store.data.items[e.rowIdx].data.date;
+                        if (e.newValues!=e.originalValues){
+                            //Lưu lại dòng có sửa data vào updatearray
+                            var rowid=e.rowIdx+(store.currentPage-1)*itemsPerPage;
+                            updatearray.push(rowid);
+                            //Chuyển data từ record vào data gốc
+                            //Do phương thức lưu data khá đặc biệt nên chỉ có thể viết từng dòng
+                            var pro=store.proxy.data[rowid];
+                            pro[2]=e.newValues.Metan;
+                            pro[3]=e.newValues.NMHC;
+                            pro[4]=e.newValues.NO;
+                            pro[5]=e.newValues.NO2;
+                            pro[6]=e.newValues.NOx;
+                            pro[7]=e.newValues.Ozone;
+                            pro[8]=e.newValues.CO;
+                            pro[9]=e.newValues.SO2;
+                            pro[10]=e.newValues.PM25;
+                            
+                        }
+                        
+                        //alert(e.grid.columns[i].dataIndex);
+                        //alert(store.getPageFromRecordIndex(19));
+                        //e.record.commit();
+                        
+                }
+                }
+            }
             
         })
     ],

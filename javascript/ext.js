@@ -34,7 +34,7 @@ Ext.onReady(function() {
                 });
             // Tạo khung data grid
             var itemsPerPage=20;
-            store = Ext.create('Ext.data.ArrayStore', {
+            var store = Ext.create('Ext.data.ArrayStore', {
                 fields: [
                     {name: 'date', type: 'date', dateFormat: 'Y-m-d'},
                     {name: 'time', type: 'date', dateFormat: 'H:i:s'},
@@ -298,24 +298,52 @@ Ext.onReady(function() {
                                 allowBlank: false
                             }
                         }],
-                    buttons: {
-                        layout:{
-                            buttonAlign: 'right',
-                        },                        
+                    bbar: {
+                                              
                         padding: '0 0 0 0',
-                        items:[{
+                        
                         xtype: 'pagingtoolbar',
                         id: 'paging',
                         beforePageText: 'Trang',
                         afterPageText: 'trên {0}',
                         store: store,
-                            
-                        displayInfo: true
-                    },{
+                        width: 500,
+                        displayInfo: true,
+                    items:[{
                         xtype: 'button',
                         text: 'Submit',
-                        
-                        scale: 'medium'
+                        scale: 'small',
+                        handler: function(){
+                            if (updatearray.length==0){
+                                Ext.Msg.alert('Failed', 'Số liệu không thay đổi');
+                            }
+                            else {
+                                var upar=[[]];
+                                var check=false;
+                                var form=Ext.getCmp('form').getForm();
+                                for (var i=0;i<=(updatearray.length-1);i++){
+                                    upar[i]=store.proxy.data[updatearray[i]];
+                                }
+                                $.ajax({url:"php/update.php", // DÙng AJAX gửi biến qua PHP lấy đường chuẩn
+                        type:"POST",
+                        cache:"false",
+                        data:
+                        {
+                            update:upar,
+                            table: form.findField('view').getValue()
+                        },
+                        dataType:"json",
+                        success:function(result) {
+                            if (result.success==true) {
+                            Ext.Msg.alert('Success', 'Cập nhật số liệu thành công');
+                            updatearray=[];
+                            check=true;
+                            }
+                            else Ext.Msg.alert('Failed', 'Cập nhật thất bại');
+                        }});
+                        if (check==false) {Ext.Msg.alert('Failed', 'Cập nhật thất bại');}
+                            }
+                        }
                 }]
                              },
                         selType: 'rowmodel',
@@ -327,10 +355,10 @@ Ext.onReady(function() {
                 edit: { // Edit dự liệu trong grid
                     fn: function(editor,e){
                         //var date=store.data.items[e.rowIdx].data.date;
-                        if (e.newValues!=e.originalValues){
+                        if (checkchange(e.newValues,e.originalValues)){
                             //Lưu lại dòng có sửa data vào updatearray
                             var rowid=e.rowIdx+(store.currentPage-1)*itemsPerPage;
-                            updatearray.push(rowid);
+                            if (updatearray.indexOf(rowid)<0) updatearray.push(rowid);
                             //Chuyển data từ record vào data gốc
                             //Do phương thức lưu data khá đặc biệt nên chỉ có thể viết từng dòng
                             var pro=store.proxy.data[rowid];
@@ -346,7 +374,7 @@ Ext.onReady(function() {
                             
                         }
                         
-                        //alert(e.grid.columns[i].dataIndex);
+                        //alert(e.newValues);
                         //alert(store.getPageFromRecordIndex(19));
                         //e.record.commit();
                         
@@ -444,3 +472,15 @@ Ext.onReady(function() {
 
             });
         });
+function checkchange(a,b){
+    if                        (a.Metan==b.Metan&&
+                            a.NMHC==b.NMHC&&
+                            a.NO==b.NO&&
+                            a.NO2==b.NO2&&
+                            a.NOx==b.NOx&&
+                            a.Ozone==b.Ozone&&
+                            a.CO==b.CO&&
+                            a.SO2==b.SO2&&
+                            a.PM25==b.PM25) {return false;}
+    else return true;
+}

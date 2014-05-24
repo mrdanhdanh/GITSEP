@@ -56,7 +56,7 @@ switch ($_POST["view"])
     dafault:
         $dataview="data_raw";
 }
-$result = pg_query($db_conn, "SELECT * FROM $dataview WHERE to_char(date,'$dateview')='$date' ORDER BY date");
+$result = pg_query($db_conn, "SELECT * FROM $dataview WHERE to_char(date,'$dateview')='$date' ORDER BY date,time");
 $count=0;
 $countchart=0;
 $total=0;

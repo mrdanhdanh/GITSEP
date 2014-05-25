@@ -19,6 +19,9 @@ Ext.onReady(function() {
                     data : [
                         {"send":"2", "name":"Metan"},
                         {"send":"3", "name":"NMHC"},
+                        {"send":"4", "name":"NO"},
+                        {"send":"5", "name":"NO2"},
+                        {"send":"6", "name":"NOx"},
                         {"send":"7", "name":"Ozone"},
                         {"send":"8", "name":"CO"},
                         {"send":"9", "name":"SO2"},
@@ -33,8 +36,9 @@ Ext.onReady(function() {
                     ]
                 });
             // Tạo khung data grid
-            var itemsPerPage=20;
-            var store = Ext.create('Ext.data.ArrayStore', {
+            itemsPerPage=20;
+            var store = Ext.create('Ext.data.JsonPStore', {
+                storeId: 'store',
                 fields: [
                     {name: 'date', type: 'date', dateFormat: 'Y-m-d'},
                     {name: 'time', type: 'date', dateFormat: 'H:i:s'},
@@ -156,10 +160,12 @@ Ext.onReady(function() {
                     submitEmptyText: true,
                     waitMsg: 'Đang chuyển yêu cầu...',
                     success: function(form, action) {
-                        showdata(action.result.root, action.result.subs);
                         store.proxy.data=action.result.root;
+                        var sub=form.findField('subs').getValue();
+                        var radioid='radio'+(sub-1);
+                        Ext.getCmp(radioid).setValue(true);
+                        //showdata(form.findField('subs').getValue());
                         Ext.getCmp('paging').doRefresh();
-                        $('#form-innerCt').append(form.findField('unit').getValue());
                     },
                     failure: function(form, action) {
                         Ext.Msg.alert('Failed', 'Gửi thông tin thất bại');
@@ -298,6 +304,8 @@ Ext.onReady(function() {
                                 allowBlank: false
                             }
                         }],
+                    tbar: {
+                    },
                     bbar: {
                                               
                         padding: '0 0 0 0',
@@ -324,7 +332,7 @@ Ext.onReady(function() {
                                 for (var i=0;i<=(updatearray.length-1);i++){
                                     upar[i]=store.proxy.data[updatearray[i]];
                                 }
-                                $.ajax({url:"php/update.php", // DÙng AJAX gửi biến qua PHP lấy đường chuẩn
+                                $.ajax({url:"php/update.php", // DÙng AJAX gửi biến qua PHP để update
                         type:"POST",
                         cache:"false",
                         data:
@@ -415,7 +423,10 @@ Ext.onReady(function() {
                 listeners:{
                                 change:{
                                     fn: function(){
-                                    alert('Test');
+                                    if (this.value) {    
+                                        showdata(this.inputValue);
+                                    }
+                                        
                                 }
                                 }
                             }
@@ -426,39 +437,39 @@ Ext.onReady(function() {
             items: [
                 {
                     name      : 'size',
-                    inputValue: 'm',
+                    inputValue: '2',
                     id        : 'radio1'
                 }, {
                     name      : 'size',
-                    inputValue: 'l',
+                    inputValue: '3',
                     id        : 'radio2'
                 }, {
                     name      : 'size',
-                    inputValue: 'xl',
+                    inputValue: '4',
                     id        : 'radio3'
                 },{
                     name      : 'size',
-                    inputValue: 'm',
+                    inputValue: '5',
                     id        : 'radio4'
                 }, {
                     name      : 'size',
-                    inputValue: 'l',
+                    inputValue: '6',
                     id        : 'radio5'
                 }, {
                     name      : 'size',
-                    inputValue: 'xl',
+                    inputValue: '7',
                     id        : 'radio6'
                 },{
                     name      : 'size',
-                    inputValue: 'm',
+                    inputValue: '8',
                     id        : 'radio7'
                 }, {
                     name      : 'size',
-                    inputValue: 'l',
+                    inputValue: '9',
                     id        : 'radio8'
                 }, {
                     name      : 'size',
-                    inputValue: 'xl',
+                    inputValue: '10',
                     id        : 'radio9'
                 }
             ]

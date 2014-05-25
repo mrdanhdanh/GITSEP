@@ -11,122 +11,28 @@
     <script src="javascript/highcharts/highcharts.js"></script>
     <script src="javascript/highcharts/no-data-to-display.js"></script>
     <script src="javascript/highcharts/exporting.js"></script>
-    <script>
-
-Ext.require(['*']);
-
-
-
-Ext.onReady(function(){
-    Ext.tip.QuickTipManager.init();
-var itemsPerPage = 2;   // set the number of items you want per page
-
-var store = Ext.create('Ext.data.Store', {
-    id:'simpsonsStore',
-
-    fields: [
-                    {name: 'date', type: 'date', dateFormat: 'Y-m-d'},
-                    {name: 'time', type: 'date', dateFormat: 'H:i:s'},
-                    {name: 'Metan', type: 'float'},
-                    {name: 'NMHC', type: 'float'},
-                    {name: 'NO', type: 'float'},
-                    {name: 'NO2', type: 'float'},
-                    {name: 'NOx', type: 'float'},
-                    {name: 'Ozone', type: 'float'},
-                    {name: 'SO2', type: 'float'},
-                    {name: 'CO', type: 'float'},
-                    {name: 'PM25', type: 'float'}
-                ],
-     
-    data: [["2013-09-10","00:01:00",2.2911,0.1004,0,0,0,39.78,3.904,-1.959,1.4],["2013-09-10","00:06:00",2.2668,0.1004,0,0,0,49.96,4.1923,-1.959,1.5],["2013-09-10","00:11:00",2.2668,0.0958,0,0,0,49.42,4.1923,-1.959,1.2],["2013-09-10","00:16:00",2.3008,0.0866,0,0,0,24.84,3.904,-1.959,5.4],["2013-09-10","00:21:00",2.3008,0.0958,0,0,0,37.74,4.1923,-1.959,4.9],["2013-09-10","00:26:00",2.2814,0.1004,0,0,0,27.84,4.0001,-1.959,4.2],["2013-09-10","00:31:00",2.2959,0.0866,0,0,0,26,3.904,-1.959,6.9],["2013-09-10","00:36:00",2.3105,0.0866,0,0,0,37.58,3.904,-1.963,6.4],["2013-09-10","00:41:00",2.3494,0.1096,0,0,0,15.06,3.904,-1.959,8.3],["2013-09-10","00:46:00",2.3348,0.1509,0,0,0,34.68,4.3845,-1.963,9.8],["2013-09-10","00:51:00",2.3397,0.1234,0,0,0,15.28,4.0001,-1.959,11.2],["2013-09-10","00:56:00",2.2862,0.082,0,0,0,22.78,4.0001,-1.959,7.3],["2013-09-10","01:01:00",2.2959,0.0866,0,0,0,22.08,3.904,-1.959,6.1],["2013-09-10","01:06:00",2.3154,0.0912,0,0,0,8.36,3.904,-1.959,5.1],["2013-09-10","01:11:00",2.2862,0.1004,0,0,0,30.32,4.0001,-1.959,4.9],["2013-09-10","01:16:00",2.3154,0.1234,0,0,0,5.5,4.0001,-1.959,4.9],["2013-09-10","01:21:00",2.3154,0.128,0,0,0,24.58,3.904,-1.963,4.9],["2013-09-10","01:26:00",2.3008,0.1188,0,0,0,13.46,4.0001,-1.959,5.6],["2013-09-10","01:31:00",2.2862,0.1004,0,0,0,13.88,3.904,-1.959,11.7],["2013-09-10","01:36:00",2.2716,0.0912,0,0,0,26.18,4.0001,-1.959,14.4],["2013-09-10","01:41:00",2.3008,0.0958,0,0,0,5.96,3.7118,-1.959,14.6],["2013-09-10","01:46:00",2.2959,0.1142,0,0,0,29.44,3.7118,-1.959,15.3],["2013-09-10","01:51:00",2.33,0.0774,0,0,0,9.16,3.7118,-1.959,17.6],["2013-09-10","01:56:00",2.3591,0.0636,0,0,0,23.92,3.4235,-1.959,16.1],["2013-09-10","02:01:00",2.3786,0.0866,0,0,0,21.4,3.7118,-1.959,16.3],["2013-09-10","02:06:00",2.3445,0.0774,0,0,0,9.1,3.6157,-1.963,16.5],["2013-09-10","02:11:00",2.2668,0.0682,0,0,0,31.98,3.4235,-1.959,16.1],["2013-09-10","02:16:00",2.2473,0.0682,0,0,0,6.3,3.4235,-1.959,11.7],["2013-09-10","02:21:00",2.223,0.0544,0,0,0,29.26,3.4235,-1.959,8.6]],
-    pageSize: itemsPerPage // items per page
-    
-});
-
-// specify segment of data you want to load using params
-store.load({
-    params:{
-        start:0,
-        limit: itemsPerPage
-    }
-});
-
-Ext.create('Ext.grid.Panel', {
-    title: 'Simpsons',
-    store: store,
-    columns: [
-                        {
-                            text : 'Ngày',
-                           
-                            dataIndex: 'date'
-                        },{
-                            text : 'Thời gian',
-                    
-                            dataIndex: 'time'
-                        },{
-                            text : 'Metan',
-                     
-                            dataIndex: 'Metan',
-                           
-                        },{
-                            text : 'NMHC',
-                            
-                            dataIndex: 'NMHC',
-                            
-                        },{
-                            text : 'NO',
-                            
-                            dataIndex: 'NO',
-                           
-                        },{
-                            text : 'NO2',
-                            
-                            dataIndex: 'NO2',
-                            
-                        },{
-                            text : 'NOx',
-                            
-                            dataIndex: 'NOx',
-                            
-                        },{
-                            text : 'Ozone',
-                          
-                            dataIndex: 'Ozone',
-                           
-                        },{
-                            text : 'CO',
-                            
-                            dataIndex: 'CO',
-                            
-                        },{
-                            text : 'SO2',
-                          
-                            dataIndex: 'SO2',
-                            
-                        },
-                        {
-                            text : 'PM25',
-                            
-                            dataIndex: 'PM25',
-                           
-                        }],
-    dockedItems: [{
-        xtype: 'pagingtoolbar',
-        store: store,   // same store GridPanel is using
-        dock: 'bottom',
-        displayInfo: true
-    }],
-    renderTo: Ext.getBody()
-});
-    
-});
-
-</script>
 </head>
 <body>
 
 <button>Get JSON data</button>
 <div id='myDiv'></div>
-
+<div id="myElement_wrapper" style="position: relative; display: block; width: 100%; height: 450px;">
+<object id="myElement" width="100%" height="100%" type="application/x-shockwave-flash" data="http://www.vtvplus.vn//jwplayer/jwplayer.flash.swf" bgcolor="#000000" name="myElement" tabindex="0">
+<param name="allowfullscreen" value="true">
+<param name="allowscriptaccess" value="always">
+<param name="seamlesstabbing" value="true">
+<param name="wmode" value="opaque">
+</object>
+<div id="myElement_aspect" style="display: none;"></div>
+</div>
+<script type="text/javascript">
+jwplayer("myElement").setup({
+file: "http://vyhjcdkn.cdnviet.com/hlyzcbv/_definst_/TheThaoHD.smil/chunklist_w2037235822_b800000.m3u8",
+image: "media/tv/1.jpg",
+width: '100%',
+height: '450',
+autostart: true
+});
+</script>
 </body>
 </html>

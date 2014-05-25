@@ -109,7 +109,12 @@ options = {
                 events: {
                     click: function(){
                         var grid = Ext.getCmp('mygrid');
-                        grid.getView().focusRow(getId(this.x),10);
+                        var store=Ext.getStore('store');
+                        var rowid=getId(this.x);
+                        var page=store.getPageFromRecordIndex(rowid);
+                        var row=rowid-((page-1)*itemsPerPage);
+                        store.loadPage(page);
+                        grid.getView().focusRow(row);
                     }
                 }
                 
@@ -134,8 +139,9 @@ options = {
 </script>
     <script>
         // Các function khác
-    function showdata(result,subs){
+    function showdata(subs){
         options.series[0].data=[];
+        var result=Ext.getStore('store').proxy.data;
         for (var i=0;i<result.length;i++) {
             var jyea=result[i][0].substr(0,4);
             var jmon=result[i][0].substr(5,2)-1;

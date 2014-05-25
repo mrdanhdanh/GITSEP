@@ -70,7 +70,7 @@ while ($row = pg_fetch_array($result)) {
     }
     $count++;
 }
-echo json_encode(array('success'=>true,'subs'=>$_POST['subs'],'root'=>$data));
+echo json_encode(array('success'=>true,'root'=>$data));
 pg_close($db_conn);
 ?>
 

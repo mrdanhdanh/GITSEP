@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title></title>
     <link href="css/ext-theme-neptune-all-debug.css" type="text/css" rel="stylesheet">
+    <link href="css/writer.css" type="text/css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Roboto&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
     <script type="text/javascript" src="javascript/ext-all.js"></script>
     <script src="javascript/jquery-2.1.1.min.js"></script>
@@ -195,6 +196,10 @@ options = {
                 
             }
             , 100); };
+        $(document).ready(function(){
+  $(document).ajaxError(function(e,xhr,opt){
+    Ext.Msg.alert('Error', xhr.status+' - '+'Không kết nối được với server');
+        });});
         
                                 
     </script>

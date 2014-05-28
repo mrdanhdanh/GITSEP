@@ -198,7 +198,7 @@ options = {
             , 100); };
         $(document).ready(function(){
   $(document).ajaxError(function(e,xhr,opt){
-    Ext.Msg.alert('Error', xhr.status+' - '+'Không kết nối được với server');
+    Ext.Msg.alert('Error', xhr.status+' - '+xhr.statusText);
         });});
         
                                 

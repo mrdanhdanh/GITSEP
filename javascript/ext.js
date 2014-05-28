@@ -1,6 +1,7 @@
 Ext.require(['*']); //Khai báo các thành phần cần load cho module extls, chọn '*' để load tất cả
 Ext.onReady(function() {
-    // Tạo data cho combobox
+    // Tạo data cho comboboxx
+    var addcheck=false;
     var typeview = Ext.create('Ext.data.Store', {
         fields: ['send', 'name'],
         data : [
@@ -41,20 +42,19 @@ Ext.onReady(function() {
         fields: [
             {name: 'date', type: 'date', dateFormat: 'Y-m-d'},
             {name: 'time', type: 'date', dateFormat: 'H:i:s'},
-            {name: 'Metan', type: 'float'},
-            {name: 'NMHC', type: 'float'},
-            {name: 'NO', type: 'float'},
-            {name: 'NO2', type: 'float'},
-            {name: 'NOx', type: 'float'},
-            {name: 'Ozone', type: 'float'},
-            {name: 'SO2', type: 'float'},
-            {name: 'CO', type: 'float'},
-            {name: 'PM25', type: 'float'}
+            {name: 'value_ch4', type: 'float'},
+            {name: 'value_nm', type: 'float'},
+            {name: 'value_no', type: 'float'},
+            {name: 'value_no2', type: 'float'},
+            {name: 'value_nox', type: 'float'},
+            {name: 'value_o3', type: 'float'},
+            {name: 'value_co', type: 'float'},
+            {name: 'value_so2', type: 'float'},
+            {name: 'value_pm25', type: 'float'}
         ]
     });
-    var store = Ext.create('Ext.data.ArrayStore', {
+    store = Ext.create('Ext.data.ArrayStore', {
         storeId: 'store',
-        autoSync: true,
         model: 'Store.AddData',
         data: [],
         proxy: {
@@ -105,8 +105,9 @@ Ext.onReady(function() {
                 xtype: 'datefield',
                 fieldLabel: 'Date',
                 name: 'date',
-                format: 'Y/m/d',
-                value: '2013/09/10',
+                format: 'd/m/Y',
+                submitFormat: 'Y/m/d',
+                value: '10/09/2013',
                 allowBlank: false
             },{
                 xtype: 'timefield',
@@ -168,7 +169,7 @@ Ext.onReady(function() {
                                 Ext.getCmp(radioid).setValue(true);
                                 //showdata(form.findField('subs').getValue());
                                 Ext.getCmp('paging').doRefresh();
-                                updatearray=[]; deletearray=[];addarray=[];
+                                udarray=[];
 
                             },
                             failure: function(form, action) {
@@ -227,7 +228,7 @@ Ext.onReady(function() {
                     minWidth :60,
                     width : '7%',
                     sortable : true,                  
-                    dataIndex: 'Metan',
+                    dataIndex: 'value_ch4',
                     editor: {
                         xtype: 'numberfield',
                         decimalPrecision: 4,
@@ -238,7 +239,7 @@ Ext.onReady(function() {
                     minWidth :60,
                     width : '7%',
                     sortable : true,
-                    dataIndex: 'NMHC',
+                    dataIndex: 'value_nm',
                     editor: {
                         xtype: 'numberfield',
                         decimalPrecision: 4,
@@ -249,7 +250,7 @@ Ext.onReady(function() {
                     minWidth :60,
                     width : '7%',
                     sortable : true,
-                    dataIndex: 'NO',
+                    dataIndex: 'value_no',
                     editor: {
                         xtype: 'numberfield',
                         decimalPrecision: 4,
@@ -260,7 +261,7 @@ Ext.onReady(function() {
                     minWidth :60,
                     width : '7%',
                     sortable : true,
-                    dataIndex: 'NO2',
+                    dataIndex: 'value_no2',
                     editor: {
                         xtype: 'numberfield',
                         decimalPrecision: 4,
@@ -271,7 +272,7 @@ Ext.onReady(function() {
                     minWidth :60,
                     width : '7%',
                     sortable : true,
-                    dataIndex: 'NOx',
+                    dataIndex: 'value_nox',
                     editor: {
                         xtype: 'numberfield',
                         decimalPrecision: 4,
@@ -282,7 +283,7 @@ Ext.onReady(function() {
                     minWidth :60,
                     width : '7%',
                     sortable : true,
-                    dataIndex: 'Ozone',
+                    dataIndex: 'value_o3',
                     editor: {
                         xtype: 'numberfield',
                         decimalPrecision: 4,
@@ -293,7 +294,7 @@ Ext.onReady(function() {
                     width : '7%',
                     minWidth :60,
                     sortable : true,
-                    dataIndex: 'CO',
+                    dataIndex: 'value_co',
                     editor: {
                         xtype: 'numberfield',
                         decimalPrecision: 4,
@@ -304,7 +305,7 @@ Ext.onReady(function() {
                     minWidth :60,
                     width : '7%',
                     sortable : true,
-                    dataIndex: 'SO2',
+                    dataIndex: 'value_so2',
                     editor: {
                         xtype: 'numberfield',
                         decimalPrecision: 4,
@@ -316,7 +317,7 @@ Ext.onReady(function() {
                     minWidth :60,
                     width : '7%',
                     sortable : true,
-                    dataIndex: 'PM25',
+                    dataIndex: 'value_pm25',
                     editor: {
                         xtype: 'numberfield',
                         decimalPrecision: 4,
@@ -357,7 +358,7 @@ Ext.onReady(function() {
                     handler: function (){
                         var selection=Ext.getCmp('mygrid').getView().getSelectionModel().getSelection()[0];
                         store.remove(selection);
-                        deletearray.push([store.proxy.data[selection.index][0],store.proxy.data[selection.index][1]]);
+                        udarray.push(['delete',store.proxy.data[selection.index]]);
                         store.proxy.data.splice(selection.index,1);
                         Ext.getCmp('paging').doRefresh();
                         var tool=Ext.getCmp('toolbar');
@@ -380,22 +381,18 @@ Ext.onReady(function() {
                     text: 'Submit',
                     scale: 'small',
                     handler: function(){
-                        if (updatearray.length==0 || store.proxy.data.length==0){
+                        if (udarray.length==0 || store.proxy.data.length==0){
                             Ext.Msg.alert('Failed', 'Số liệu không thay đổi');
                         }
                         else {
-                            var upar=[[]];
                             var check=false;
                             var form=Ext.getCmp('form').getForm();
-                            for (var i=0;i<=(updatearray.length-1);i++){
-                                upar[i]=store.proxy.data[updatearray[i]];
-                            }
                             $.ajax({url:"php/update.php", // DÙng AJAX gửi biến qua PHP để update
                                     type:"POST",
                                     cache:"false",
                                     data:
                                     {
-                                        update:upar,
+                                        change:udarray,
                                         table: form.findField('view').getValue()
                                     },
                                     dataType:"json",
@@ -431,21 +428,31 @@ Ext.onReady(function() {
                                         proxy[i]=e.record.get(field[i].name);
                                     }
                                     store.proxy.data.unshift(proxy);
+                                    udarray.push(['add',changearray(e.newValues)]);
                                     Ext.getCmp('paging').doRefresh();
                                     addcheck=false;        
                                 }
-                                else if (checkchange(e.newValues,e.originalValues)){
-                                    //Lưu lại dòng có sửa data vào updatearray
+                                else {
                                     var rowid=e.rowIdx+(store.currentPage-1)*itemsPerPage;
-                                    if (updatearray.indexOf(rowid)<0) updatearray.push(rowid);
-                                    //Chuyển data từ record vào data gốc
-                                    //Do phương thức lưu data khá đặc biệt nên chỉ có thể viết từng dòng
                                     var proxy=store.proxy.data[rowid];
                                     var field=store.getProxy().getModel().getFields();
-                                    for (var i=2;i<=10;i++) {
-                                        proxy[i]=e.record.get(field[i].name);
-                                    }                      
-                                }              
+                                    switch(checkchange(e.newValues,e.originalValues)) {
+                                        case 'update':
+                                            for (var i=2;i<=10;i++) {
+                                                proxy[i]=e.record.get(field[i].name);
+                                            }
+                                            udarray.push(['update',changearray(e.newValues)]);
+                                            break;
+                                        case 'change':
+                                            udarray.push(['change',changearray(e.originalValues), changearray(e.newValues)]);
+                                            proxy[0]=Ext.Date.format(e.record.get('date'),'Y-m-d');
+                                            proxy[1]=Ext.Date.format(e.record.get('time'),'H:i:s');
+                                            for (var i=2;i<=10;i++) {
+                                                proxy[i]=e.record.get(field[i].name);
+                                            }
+                                            break;    
+                                    }    
+                                }  
                         //alert(e.newValues);
                         //alert(store.getPageFromRecordIndex(19));
                         //e.record.commit();                      
@@ -476,6 +483,7 @@ Ext.onReady(function() {
                         align: 'middle',
                         pack: 'center'
                     },
+                    // Tạo radio chọn chất cần xem
                     xtype      : 'fieldcontainer',
                     defaultType: 'radiofield',                                
                     defaults: {
@@ -536,14 +544,31 @@ Ext.onReady(function() {
     });
 });
 function checkchange(a,b){
-    if (a.Metan==b.Metan&&
-        a.NMHC==b.NMHC&&
-        a.NO==b.NO&&
-        a.NO2==b.NO2&&
-        a.NOx==b.NOx&&
-        a.Ozone==b.Ozone&&
-        a.CO==b.CO&&
-        a.SO2==b.SO2&&
-        a.PM25==b.PM25) {return false;}
-    else return true;
+    if (Ext.Date.format(a.date,'Y-m-d')!=Ext.Date.format(b.date,'Y-m-d') || Ext.Date.format(a.time,'H:i:s')!=Ext.Date.format(b.time,'H:i:s')) {return 'change';}
+    else if (a.value_ch4==b.value_ch4&&
+        a.value_nm==b.value_nm&&
+        a.value_no==b.value_no&&
+        a.value_no2==b.value_no2&&
+        a.value_nox==b.value_nox&&
+        a.value_o3==b.value_o3&&
+        a.value_co==b.value_co&&
+        a.value_so2==b.value_so2&&
+        a.value_pm25==b.value_pm25) {return 'nochange';}
+    else return 'update';
 }
+function changearray(a){
+    var b=[];
+    b[0]=Ext.Date.format(a.date,'Y-m-d');
+    b[1]=Ext.Date.format(a.time,'H:i:s');
+    b[2]=a.value_ch4;
+    b[3]=a.value_nm;
+    b[4]=a.value_no;
+    b[5]=a.value_no2;
+    b[6]=a.value_nox;
+    b[7]=a.value_o3;
+    b[8]=a.value_co;
+    b[9]=a.value_so2;
+    b[10]=a.value_pm25;
+    return b;
+}
+

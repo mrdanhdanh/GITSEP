@@ -37,6 +37,7 @@ switch ($_POST["view"])
         break;    
     case "h":
         $dataview="air_quality_data_60min";
+		$dateview="YYYY/MM/DD";
         break;
     case "d":
         $dataview="air_quality_data_day";
@@ -60,7 +61,7 @@ $result = pg_query($db_conn, "SELECT * FROM $dataview WHERE to_char(date,'$datev
 $count=0;
 $countchart=0;
 $total=0;
-$data=array(array(null));
+$data=[];
 while ($row = pg_fetch_array($result)) {
     $data[$count][0]=$row[1];
     $data[$count][1]=$row[2];
@@ -70,8 +71,9 @@ while ($row = pg_fetch_array($result)) {
     }
     $count++;
 }
-echo json_encode(array('success'=>true,'root'=>$data));
 pg_close($db_conn);
+if ($data==null) {echo json_encode(array('success'=>false));}
+else echo json_encode(array('success'=>true,'root'=>$data));
 ?>
 
  

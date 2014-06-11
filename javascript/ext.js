@@ -17,15 +17,15 @@ Ext.onReady(function() {
         subs = Ext.create('Ext.data.Store', {
             fields: ['send', 'name'],
             data : [
-                {"send":"2", "name":"Metan"},
-                {"send":"3", "name":"NMHC"},
-                {"send":"4", "name":"NO"},
-                {"send":"5", "name":"NO2"},
-                {"send":"6", "name":"NOx"},
-                {"send":"7", "name":"Ozone"},
-                {"send":"8", "name":"CO"},
-                {"send":"9", "name":"SO2"},
-                {"send":"10", "name":"PM2.5"}
+                {"send":1, "name":"Metan"},
+                {"send":2, "name":"NMHC"},
+                {"send":3, "name":"NO"},
+                {"send":4, "name":"NO2"},
+                {"send":5, "name":"NOx"},
+                {"send":6, "name":"Ozone"},
+                {"send":7, "name":"CO"},
+                {"send":8, "name":"SO2"},
+                {"send":9, "name":"PM2.5"}
             ]
         }),
         unit = Ext.create('Ext.data.Store', {
@@ -105,9 +105,10 @@ Ext.onReady(function() {
                 xtype: 'datefield',
                 fieldLabel: 'Date',
                 name: 'date',
+                id: 'date',
                 format: 'd/m/Y',
                 submitFormat: 'Y/m/d',
-                value: '10/09/2013',
+                value: '28/02/2014',
                 allowBlank: false
             },{
                 xtype: 'timefield',
@@ -124,7 +125,7 @@ Ext.onReady(function() {
                 queryMode: 'local',
                 displayField: 'name',
                 valueField: 'send',
-                value: '5p',
+                value: 'h',
                 allowBlank: false
             },{
                 xtype: 'combo',
@@ -134,7 +135,7 @@ Ext.onReady(function() {
                 fieldLabel: 'Substance',
                 name: 'subs',
                 displayField: 'name',
-                value: '2',
+                value: 1,
                 valueField: 'send'
             },{
                 xtype: 'combo',
@@ -165,15 +166,16 @@ Ext.onReady(function() {
                             success: function(form, action) {
                                 store.proxy.data=action.result.root;
                                 var sub=form.findField('subs').getValue();
-                                var radioid='radio'+(sub-1);
-                                Ext.getCmp(radioid).setValue(true);
+                                var radioid='radio'+sub;
+                                if (Ext.getCmp(radioid).getValue()) {showdata(sub);}
+                                else Ext.getCmp(radioid).setValue(true);
                                 //showdata(form.findField('subs').getValue());
                                 Ext.getCmp('paging').doRefresh();
                                 udarray=[];
-
                             },
                             failure: function(form, action) {
-                                Ext.Msg.alert('Failed', 'Gửi thông tin thất bại');
+                                store.proxy.data=[];
+                                showdata(form.findField('subs').getValue());
                             }
                         });
                     }
@@ -348,7 +350,8 @@ Ext.onReady(function() {
                         }), edit = Ext.getCmp('mygrid').getPlugin('rowedit');
                         store.insert(0, rec);
                         addcheck=true;
-                        edit.startEdit(0,2);}
+                        edit.startEdit(0,2);
+                    }
                 },{
                     iconCls: 'icon-delete',
                     text: 'Delete',
@@ -361,6 +364,7 @@ Ext.onReady(function() {
                         udarray.push(['delete',store.proxy.data[selection.index]]);
                         store.proxy.data.splice(selection.index,1);
                         Ext.getCmp('paging').doRefresh();
+                        showdata(Ext.getCmp('form').getForm().findField('subs').getValue());
                         var tool=Ext.getCmp('toolbar');
                         tool.getComponent('delete').disable();                    
                     }
@@ -430,6 +434,7 @@ Ext.onReady(function() {
                                     store.proxy.data.unshift(proxy);
                                     udarray.push(['add',changearray(e.newValues)]);
                                     Ext.getCmp('paging').doRefresh();
+                                    showdata(Ext.getCmp('form').getForm().findField('subs').getValue());
                                     addcheck=false;        
                                 }
                                 else {
@@ -442,6 +447,7 @@ Ext.onReady(function() {
                                                 proxy[i]=e.record.get(field[i].name);
                                             }
                                             udarray.push(['update',changearray(e.newValues)]);
+                                            showdata(Ext.getCmp('form').getForm().findField('subs').getValue());
                                             break;
                                         case 'change':
                                             udarray.push(['change',changearray(e.originalValues), changearray(e.newValues)]);
@@ -450,6 +456,7 @@ Ext.onReady(function() {
                                             for (var i=2;i<=10;i++) {
                                                 proxy[i]=e.record.get(field[i].name);
                                             }
+                                            showdata(Ext.getCmp('form').getForm().findField('subs').getValue());
                                             break;    
                                     }    
                                 }  
@@ -493,6 +500,7 @@ Ext.onReady(function() {
                                 fn: function(){
                                     if (this.value) {    
                                         showdata(this.inputValue);
+                                        Ext.getCmp('form').getForm().findField('subs').setValue(this.inputValue);
                                     }                               
                                 }
                             }
@@ -500,39 +508,39 @@ Ext.onReady(function() {
                     },     
                     items: [{
                         name      : 'size',
-                        inputValue: '2',
+                        inputValue: 1,
                         id        : 'radio1'
                     },{
                         name      : 'size',
-                        inputValue: '3',
+                        inputValue: 2,
                         id        : 'radio2'
                     }, {
                         name      : 'size',
-                        inputValue: '4',
+                        inputValue: 3,
                         id        : 'radio3'
                     },{
                         name      : 'size',
-                        inputValue: '5',
+                        inputValue: 4,
                         id        : 'radio4'
                     }, {
                         name      : 'size',
-                        inputValue: '6',
+                        inputValue: 5,
                         id        : 'radio5'
                     }, {
                         name      : 'size',
-                        inputValue: '7',
+                        inputValue: 6,
                         id        : 'radio6'
                     },{
                         name      : 'size',
-                        inputValue: '8',
+                        inputValue: 7,
                         id        : 'radio7'
                     }, {
                         name      : 'size',
-                        inputValue: '9',
+                        inputValue: 8,
                         id        : 'radio8'
                     }, {
                         name      : 'size',
-                        inputValue: '10',
+                        inputValue: 9,
                         id        : 'radio9'
                     }
                            ]   

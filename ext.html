@@ -17,6 +17,7 @@
              
 //Phần code cho chart và các hiệu ứng
 //Tạo options cho chart
+
 options = {
     chart: {
         type: 'spline',
@@ -53,10 +54,10 @@ options = {
         text: 'SEP'
     },
     title: {
-        text: 'Nồng độ '+ name +' theo thời gian'
+        text: 'Nồng độ theo thời gian'
     },
     subtitle: {
-        text: 'Maintain'
+        text: 'Ngày tháng năm'
     },
     xAxis: {
         type: 'datetime',
@@ -77,8 +78,22 @@ options = {
     yAxis: {
         title: {
             text: 'Nồng độ'
-        }
+        },
+        plotLines: [{
+            value: 0,
+            color: 'red',
+            width: 2,
+            zIndex: 4,
+            label: {
+                text: 'Qui chuẩn Việt Nam: Không quy định',
+                align: 'left',
+                style: {
+                    color: 'red'
+                }
+            }  
+        }]
     },
+    
     tooltip: {
         enabled: true,
         hideDelay: 100,
@@ -100,8 +115,8 @@ options = {
                 enabled: true,
                 states: {
                     select: {
-                        fillColor: '#f500ff',
-                        lineColor: '#f500ff',
+                        fillColor: '#25e57b',
+                        lineColor: '#25e57b',
                         lineWidth: '3px'
                     }
                 }
@@ -140,9 +155,23 @@ options = {
 </script>
     <script>
         // Các function khác
+    unit=['ppm','ppm','ppb','ppb','ppb','ppb','ppm','ppb','microg/Nm3'];
     function showdata(subs){
         options.series[0].data=[];
         var result=Ext.getStore('store').proxy.data;
+        var date=Ext.getCmp('date').getSubmitValue();
+        options.yAxis.title.text= 'Nồng độ ('+unit[subs-1]+')';
+        options.title.text='Nồng độ '+Ext.getCmp('subs').getStore().data.items[subs-1].data.name+' theo thời gian';
+        options.subtitle.text='Ngày '+date.substr(8,2)+' tháng '+date.substr(5,2)+' năm '+date.substr(0,4);
+        if (subs==4||subs==6||subs==7||subs==8||subs==9) {
+            options.yAxis.plotLines[0].value=100;
+            options.yAxis.plotLines[0].label.text='Qui chuẩn Việt Nam: 100';
+        }
+        else {
+            options.yAxis.plotLines[0].value=0;
+            options.yAxis.plotLines[0].label.text='Qui chuẩn Việt Nam: Không qui định';
+        }
+        if (result.length!=0){
         for (var i=0;i<result.length;i++) {
             var jyea=result[i][0].substr(0,4);
             var jmon=result[i][0].substr(5,2)-1;
@@ -150,13 +179,14 @@ options = {
             var jhou=result[i][1].substr(0,2);
             var jmin=result[i][1].substr(3,2);
             var jsec=result[i][1].substr(6,2);
-            options.series[0].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),result[i][subs]]);                        
-        }
-    drawchartaqi();
+            options.series[0].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),result[i][subs+1]]);
+        }        
+        drawchartaqi();
+        } else $('#chart-innerCt').highcharts(options);
     }
     function drawchartaqi(){
-        $('#chart-innerCt').highcharts(options,
-    function(chart) {
+        $('#chart-innerCt').highcharts(options);
+        var chart=$('#chart-innerCt').highcharts();
         var text = chart.renderer.text(
                 'AQI = ', 
                 chart.plotLeft + 10, 
@@ -178,7 +208,6 @@ options = {
             })
             .add();
         
-    });
     }
     function getId(value){  
         var ar=options.series[0].data;
@@ -193,7 +222,6 @@ options = {
                 $('#chart-innerCt').resize(function(){
                     $('#chart-innerCt').highcharts().reflow();
                 });
-                
             }
             , 100); };
         $(document).ready(function(){

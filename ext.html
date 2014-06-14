@@ -121,6 +121,38 @@ options = {
                     }
                 }
             },
+            events:{
+                mouseOut: function(){
+                        rect.destroy();
+                            text.destroy();
+                        if (maxaqi24h<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)'}
+                        else if (maxaqi24h<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';}
+                        else if (maxaqi24h<=200) {fillcolor='rgb(255, 167, 0)';strokecolor='rgba(255, 167, 0, 0.75)';}
+                        else if (maxaqi24h<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';}
+                        else {fillcolor='rgb(162, 92, 3)';strokecolor='rgb(162, 92, 3, 0.75)';}
+        var chart=$('#chart-innerCt').highcharts();
+        text = chart.renderer.text(
+                'AQI (24h) = '+Math.round(maxaqi24h)+' ('+subname24h+')', 
+                chart.plotLeft + 50, 
+                chart.plotTop + 30
+            ).attr({
+                zIndex: 5
+            }).css({
+                color: '#ffffff',
+                fontSize: '16px'
+            }).add();
+        
+        var box = text.getBBox();
+        rect=chart.renderer.rect(box.x - 5, box.y - 5, box.width + 10, box.height + 10, 0)
+            .attr({
+                fill: fillcolor,
+                stroke: strokecolor,
+                'stroke-width': 1,
+                zIndex: 4
+            })
+            .add();
+                    }
+            },
             point: {
                 events: {
                     click: function(){
@@ -131,7 +163,62 @@ options = {
                         var row=rowid-((page-1)*itemsPerPage);
                         store.loadPage(page);
                         grid.getView().focusRow(row);
-                    }
+                    },
+					mouseOver: function(){
+						if (Ext.getCmp('view').getValue()=='h') {
+                        var grid = Ext.getCmp('mygrid');
+                        var store=Ext.getStore('store');
+                        var rowid=getId(this.x);
+                        var page=store.getPageFromRecordIndex(rowid);
+                        var row=rowid-((page-1)*itemsPerPage);
+						var data=store.proxy.data[row];
+						var maxaqi1h=0;
+                        var subname=null;
+						for (var i=0;i<=4;i++) {
+							var sub=haveqcvn[i];
+							if (arrayqcvn[sub]['klr']==0) {stand=arrayqcvn[sub]['avg_1h'];}
+								else if (unit[sub-1]=='ppm') {
+									stand=arrayqcvn[sub]['avg_1h']/arrayqcvn[sub]['klr']*24.45/1000;
+									} else stand=arrayqcvn[sub]['avg_1h']/arrayqcvn[sub]['klr']*24.45;
+							if (i==4) stand=300;
+                            if (maxaqi1h!=Math.max(data[haveqcvn[i]+ex]/stand*100,maxaqi1h)) {
+                                maxaqi1h=Math.max(data[haveqcvn[i]+ex]/stand*100,maxaqi1h);
+                                subname=arrayqcvn[sub]['name'];
+                            }
+							
+						}
+						if (maxaqi1h<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)'}
+                        else if (maxaqi1h<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';}
+                        else if (maxaqi1h<=200) {fillcolor='rgb(255, 167, 0)';strokecolor='rgba(255, 167, 0, 0.75)';}
+                        else if (maxaqi1h<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';}
+                        else {fillcolor='rgb(162, 92, 3)';strokecolor='rgb(162, 92, 3, 0.75)';}
+                            rect.destroy();
+                            text.destroy();
+						var chart=$('#chart-innerCt').highcharts();
+                        var time=parseInt(data[1].substr(0,2));
+        text = chart.renderer.text(
+                'AQI ('+time+'h - '+(time+1)+'h) = '+Math.round(maxaqi1h)+' ('+subname+')', 
+                chart.plotLeft + 50, 
+                chart.plotTop + 30
+            ).attr({
+                zIndex: 5
+            }).css({
+                color: '#ffffff',
+                fontSize: '16px'
+            }).add();
+        
+        var box = text.getBBox();
+        rect=chart.renderer.rect(box.x - 5, box.y - 5, box.width + 10, box.height + 10, 0)
+            .attr({
+                fill: fillcolor,
+                stroke: strokecolor,
+                'stroke-width': 1,
+                zIndex: 4
+            })
+            .add();
+					}
+                }
+                    
                 }
                 
             },
@@ -155,54 +242,130 @@ options = {
 </script>
     <script>
         // Các function khác
+		ex=0; //Biến số cộng thêm để lấy data từ store.proxy
     unit=['ppm','ppm','ppb','ppb','ppb','ppb','ppm','ppb','microg/Nm3'];
+    haveqcvn=[4,6,7,8,9];
+	arrayqcvn = {
+4:{'name':'NO2','avg_1h':200,'avg_24h':100,'avg_1y':40,'klr':46},
+6:{'name':'O3','avg_1h':200,'avg_24h':0,'avg_1y':0,'klr':48},
+7:{'name':'CO','avg_1h':30000,'avg_24h':0,'avg_1y':0,'klr':28},
+8:{'name':'SO2','avg_1h':350,'avg_24h':125,'avg_1y':50,'klr':64},
+9:{'name':'PM2.5','avg_1h':0,'avg_24h':50,'avg_1y':25,'klr':0}
+};
     function showdata(subs){
         options.series[0].data=[];
-        var result=Ext.getStore('store').proxy.data;
+        var data=Ext.getStore('store').proxy.data;
         var date=Ext.getCmp('date').getSubmitValue();
         options.yAxis.title.text= 'Nồng độ ('+unit[subs-1]+')';
         options.title.text='Nồng độ '+Ext.getCmp('subs').getStore().data.items[subs-1].data.name+' theo thời gian';
         options.subtitle.text='Ngày '+date.substr(8,2)+' tháng '+date.substr(5,2)+' năm '+date.substr(0,4);
-        if (subs==4||subs==6||subs==7||subs==8||subs==9) {
-            options.yAxis.plotLines[0].value=100;
-            options.yAxis.plotLines[0].label.text='Qui chuẩn Việt Nam: 100';
+        
+        
+        if (haveqcvn.indexOf(subs)>=0) {
+            switch(Ext.getCmp('form').getForm().findField('view').getValue()) {
+	case 'h':
+        view='avg_1h';
+        break;
+    case 'd':
+        view='avg_24h';
+        break;
+    default:
+		view=null;
+}
+			if (view!=null && arrayqcvn[subs][view]!=0) {
+				if (arrayqcvn[subs]['klr']==0) {qcvn=arrayqcvn[subs][view];}
+				else if (unit[subs-1]=='ppm') {
+					qcvn=arrayqcvn[subs][view]/arrayqcvn[subs]['klr']*24.45/1000;
+					} else qcvn=arrayqcvn[subs][view]/arrayqcvn[subs]['klr']*24.45;
+			} else qcvn=0;
         }
-        else {
+        else qcvn=0;
+		if (qcvn==0) {
             options.yAxis.plotLines[0].value=0;
             options.yAxis.plotLines[0].label.text='Qui chuẩn Việt Nam: Không qui định';
-        }
-        if (result.length!=0){
-        for (var i=0;i<result.length;i++) {
-            var jyea=result[i][0].substr(0,4);
-            var jmon=result[i][0].substr(5,2)-1;
-            var jday=result[i][0].substr(8,2);
-            var jhou=result[i][1].substr(0,2);
-            var jmin=result[i][1].substr(3,2);
-            var jsec=result[i][1].substr(6,2);
-            options.series[0].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),result[i][subs+1]]);
-        }        
-        drawchartaqi();
+        } else {
+			options.yAxis.plotLines[0].value=qcvn;
+            options.yAxis.plotLines[0].label.text='Qui chuẩn Việt Nam: '+(Math.round(qcvn * 1000) / 1000)+' '+unit[subs-1];
+		}
+        if (data.length!=0){
+            if (Ext.getCmp('view').getValue()=='d') {
+                ex=0;
+                for (var i=0;i<data.length;i++) {
+            var jyea=data[i][0].substr(0,4);
+            var jmon=data[i][0].substr(5,2)-1;
+            var jday=data[i][0].substr(8,2);
+            options.series[0].data.push([Date.UTC(jyea,jmon,jday),data[i][subs+ex]]);  
+            };
+            $('#chart-innerCt').highcharts(options); }
+            else {
+                ex=1;
+        for (var i=0;i<data.length;i++) {
+            var jyea=data[i][0].substr(0,4);
+            var jmon=data[i][0].substr(5,2)-1;
+            var jday=data[i][0].substr(8,2);
+            var jhou=data[i][1].substr(0,2);
+            var jmin=data[i][1].substr(3,2);
+            var jsec=data[i][1].substr(6,2);
+            options.series[0].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),data[i][subs+ex]]);  
+        };
+              if (Ext.getCmp('view').getValue()=='h') {drawchartaqi();}
+            else $('#chart-innerCt').highcharts(options);}        
         } else $('#chart-innerCt').highcharts(options);
     }
     function drawchartaqi(){
+		var maxavg1h=[0,0,0,0,0];
+		var avg24h=[0,0,0,0,0];
+        subname24h=null;
+        maxaqi24h=0;
+		for (var i=0;i<=4;i++) {
+            
+			for (var y=0;y<store.proxy.data.length;y++) {
+                var value=store.proxy.data[y][haveqcvn[i]+ex];
+				maxavg1h[i]=Math.max(maxavg1h[i],value);
+                avg24h[i]=avg24h[i]+value;
+			}
+            avg24h[i]=avg24h[i]/store.proxy.data.length;
+            var sub=haveqcvn[i];
+							if (arrayqcvn[sub]['klr']==0) {
+                                stand1h=arrayqcvn[sub]['avg_1h'];
+                                stand24h=arrayqcvn[sub]['avg_24h'];
+                            }
+								else if (unit[sub-1]=='ppm') {
+                                    stand1h=arrayqcvn[sub]['avg_1h']/arrayqcvn[sub]['klr']*24.45/1000;
+                                    stand24h=arrayqcvn[sub]['avg_24h']/arrayqcvn[sub]['klr']*24.45/1000;
+                                } else {
+                                    stand1h=arrayqcvn[sub]['avg_1h']/arrayqcvn[sub]['klr']*24.45;
+                                    stand24h=arrayqcvn[sub]['avg_24h']/arrayqcvn[sub]['klr']*24.45;
+                                }
+							if (i==4) stand1h=300;
+            var tam=maxaqi24h;
+            if (stand24h==0) {maxaqi24h=Math.max(maxavg1h[i]/stand1h*100,maxaqi24h);}
+            else maxaqi24h=Math.max(maxavg1h[i]/stand1h*100,avg24h[i]/stand24h*100,maxaqi24h);
+            if (tam!=maxaqi24h) subname24h=arrayqcvn[sub]['name'];
+		}
+        if (maxaqi24h<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)'}
+                        else if (maxaqi24h<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';}
+                        else if (maxaqi24h<=200) {fillcolor='rgb(255, 167, 0)';strokecolor='rgba(255, 167, 0, 0.75)';}
+                        else if (maxaqi24h<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';}
+                        else {fillcolor='rgb(162, 92, 3)';strokecolor='rgb(162, 92, 3, 0.75)';}
         $('#chart-innerCt').highcharts(options);
         var chart=$('#chart-innerCt').highcharts();
-        var text = chart.renderer.text(
-                'AQI = ', 
-                chart.plotLeft + 10, 
-                chart.plotTop + 50
+        text = chart.renderer.text(
+                'AQI (24h) = '+Math.round(maxaqi24h)+' ('+subname24h+')', 
+                chart.plotLeft + 50, 
+                chart.plotTop + 30
             ).attr({
                 zIndex: 5
             }).css({
-                color: '#000',
+                color: '#ffffff',
                 fontSize: '16px'
             }).add();
         
         var box = text.getBBox();
-        chart.renderer.rect(box.x - 5, box.y - 5, box.width + 10, box.height + 10, 0)
+        rect=chart.renderer.rect(box.x - 5, box.y - 5, box.width + 10, box.height + 10, 0)
             .attr({
-                fill: 'rgb(0, 177, 255)',
-                stroke: 'rgba(0, 140, 255, 0.76)',
+                fill: fillcolor,
+                stroke: strokecolor,
                 'stroke-width': 1,
                 zIndex: 4
             })
@@ -223,11 +386,8 @@ options = {
                     $('#chart-innerCt').highcharts().reflow();
                 });
             }
-            , 100); };
-        $(document).ready(function(){
-  $(document).ajaxError(function(e,xhr,opt){
-    Ext.Msg.alert('Error', xhr.status+' - '+xhr.statusText);
-        });});
+            , 300); };
+
         
                                 
     </script>

@@ -10,8 +10,9 @@
 	$i=0;
 	while ((!$file->eof()) and ($i<=300)) {
 		$ar=$file->fgetcsv();
+		
 		for ($y=0;$y<=count($ar)-1;$y++){
-			if ($ar[$y]=='+++++++') $ar[$y]=0;
+			if ($ar[$y]==' +++++++') $ar[$y]=0;
 		}
 		if ($ar<>null) {
 		$datetime=date_create($ar[1]);

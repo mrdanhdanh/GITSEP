@@ -3,36 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <title></title>
-    <link href="css/ext-theme-neptune-all-debug.css" type="text/css" rel="stylesheet">
-    <link href='http://fonts.googleapis.com/css?family=Roboto&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
-    <script type="text/javascript" src="javascript/ext-all.js"></script>
-    <script src="javascript/jquery-2.1.1.min.js"></script>
-    <script src="javascript/jquery.ba-resize.min.js"></script>
-    <script src="javascript/highcharts/highcharts.js"></script>
-    <script src="javascript/highcharts/no-data-to-display.js"></script>
-    <script src="javascript/highcharts/exporting.js"></script>
 </head>
 <body>
 
-<button>Get JSON data</button>
-<div id='myDiv'></div>
-<div id="myElement_wrapper" style="position: relative; display: block; width: 100%; height: 450px;">
-<object id="myElement" width="100%" height="100%" type="application/x-shockwave-flash" data="http://www.vtvplus.vn//jwplayer/jwplayer.flash.swf" bgcolor="#000000" name="myElement" tabindex="0">
-<param name="allowfullscreen" value="true">
-<param name="allowscriptaccess" value="always">
-<param name="seamlesstabbing" value="true">
-<param name="wmode" value="opaque">
-</object>
-<div id="myElement_aspect" style="display: none;"></div>
-</div>
-<script type="text/javascript">
-jwplayer("myElement").setup({
-file: "http://vyhjcdkn.cdnviet.com/hlyzcbv/_definst_/TheThaoHD.smil/chunklist_w2037235822_b800000.m3u8",
-image: "media/tv/1.jpg",
-width: '100%',
-height: '450',
-autostart: true
-});
+<p id="demo"></p>
+
+<script>
+qcvn = {
+4:{'avg_1h':200,'avg_24h':100,'avg_1y':40,'klr':46},
+6:{'avg_1h':200,'avg_24h':0,'avg_1y':0,'klr':48},
+7:{'avg_1h':30000,'avg_24h':0,'avg_1y':0,'klr':28},
+8:{'avg_1h':350,'avg_24h':125,'avg_1y':50,'klr':64},
+9:{'avg_1h':0,'avg_24h':50,'avg_1y':25,'klr':0}
+};
+document.getElementById("demo").innerHTML = qcvn[4]['klr'];
 </script>
+
 </body>
 </html>

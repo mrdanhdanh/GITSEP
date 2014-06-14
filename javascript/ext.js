@@ -114,12 +114,13 @@ Ext.onReady(function() {
                 xtype: 'timefield',
                 fieldLabel: 'Time',
                 name: 'time',
-                format: 'H:i',
+                format: 'H:i:s',
                 increment: 60,
                 allowBlank: true
             },{
                 xtype: 'combo',
                 fieldLabel: 'Data type view',
+                id: 'view',
                 name: 'view',
                 store: typeview,
                 queryMode: 'local',
@@ -165,6 +166,7 @@ Ext.onReady(function() {
                             waitMsg: 'Đang chuyển yêu cầu...',
                             success: function(form, action) {
                                 store.proxy.data=action.result.root;
+                                qcvn=action.result.qcvn;
                                 var sub=form.findField('subs').getValue();
                                 var radioid='radio'+sub;
                                 if (Ext.getCmp(radioid).getValue()) {showdata(sub);}
@@ -176,6 +178,7 @@ Ext.onReady(function() {
                             failure: function(form, action) {
                                 store.proxy.data=[];
                                 showdata(form.findField('subs').getValue());
+                                qcvn=0;
                             }
                         });
                     }
@@ -327,7 +330,6 @@ Ext.onReady(function() {
                     }
                 }],
             tbar: {
-                xtype: 'toolbar',
                 id: 'toolbar',
                 items: [{
                     iconCls: 'icon-add',
@@ -368,6 +370,29 @@ Ext.onReady(function() {
                         var tool=Ext.getCmp('toolbar');
                         tool.getComponent('delete').disable();                    
                     }
+                },{
+                    text: 'Download',
+                    listeners:{
+                        click: {
+                            fn: function(){
+                                
+                                if (store.proxy.data.length!=0) {
+                                    var data=null;
+                                    for (var i=0;i<store.proxy.data.length;i++) {
+                                        for (var y=0;y<store.proxy.data[i].length;y++) {
+                                            if (data==null) {data='data['+i+'][]='+store.proxy.data[i][y];}
+                                            else data+='&data['+i+'][]='+store.proxy.data[i][y];
+                                        }
+                                    }
+                                        
+                                window.location='php/download.php?'+data;
+                                }
+                                else Ext.Msg.alert('Failed', 'Không có số liệu để download');
+                                  
+                                    
+                            }
+                        }    
+                    }
                 }]
             },
             bbar: {
@@ -403,7 +428,7 @@ Ext.onReady(function() {
                                     success:function(result) {
                                         if (result.success==true) {
                                             Ext.Msg.alert('Success', 'Cập nhật số liệu thành công');
-                                            updatearray=[];
+                                            udarray=[];
                                             check=true;
                                         }
                                         else {Ext.Msg.alert('Failed', 'Cập nhật thất bại');}

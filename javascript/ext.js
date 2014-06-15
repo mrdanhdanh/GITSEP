@@ -114,6 +114,7 @@ Ext.onReady(function() {
                 xtype: 'timefield',
                 fieldLabel: 'Time',
                 name: 'time',
+                id: 'time',
                 format: 'H:i:s',
                 increment: 60,
                 allowBlank: true
@@ -375,19 +376,9 @@ Ext.onReady(function() {
                     listeners:{
                         click: {
                             fn: function(){
-                                
-                                if (store.proxy.data.length!=0) {
-                                    var data=null;
-                                    for (var i=0;i<store.proxy.data.length;i++) {
-                                        for (var y=0;y<store.proxy.data[i].length;y++) {
-                                            if (data==null) {data='data['+i+'][]='+store.proxy.data[i][y];}
-                                            else data+='&data['+i+'][]='+store.proxy.data[i][y];
-                                        }
-                                    }
-                                        
-                                window.location='php/download.php?'+data;
-                                }
-                                else Ext.Msg.alert('Failed', 'Không có số liệu để download');
+                                var data = Ext.getCmp('form').getForm();
+                                window.location='php/download.php?date='+data.findField('date').getSubmitValue()+'&time='+data.findField('time').getSubmitValue()+'&view='+data.findField('view').getSubmitValue();
+                              
                                   
                                     
                             }

@@ -43,59 +43,14 @@ Ext.onReady(function() {
             {name: 'date', type: 'date', dateFormat: 'Y-m-d'},
             {name: 'time', type: 'date', dateFormat: 'H:i:s'},
             {name: 'value_ch4', type: 'float'},
-            {name: 'min_ch4', type: 'float'},
-            {name: 'downquar_ch4', type: 'float'},
-            {name: 'median_ch4', type: 'float'},
-            {name: 'upquar_ch4', type: 'float'},
-            {name: 'max_ch4', type: 'float'},
             {name: 'value_nm', type: 'float'},
-            {name: 'min_nm', type: 'float'},
-            {name: 'downquar_nm', type: 'float'},
-            {name: 'median_nm', type: 'float'},
-            {name: 'upquar_nm', type: 'float'},
-            {name: 'max_nm', type: 'float'},
             {name: 'value_no', type: 'float'},
-            {name: 'min_no', type: 'float'},
-            {name: 'downquar_no', type: 'float'},
-            {name: 'median_no', type: 'float'},
-            {name: 'upquar_no', type: 'float'},
-            {name: 'max_no', type: 'float'},
             {name: 'value_no2', type: 'float'},
-            {name: 'min_no2', type: 'float'},
-            {name: 'downquar_no2', type: 'float'},
-            {name: 'median_no2', type: 'float'},
-            {name: 'upquar_no2', type: 'float'},
-            {name: 'max_no2', type: 'float'},
             {name: 'value_nox', type: 'float'},
-            {name: 'min_nox', type: 'float'},
-            {name: 'downquar_nox', type: 'float'},
-            {name: 'median_nox', type: 'float'},
-            {name: 'upquar_nox', type: 'float'},
-            {name: 'max_nox', type: 'float'},
             {name: 'value_o3', type: 'float'},
-            {name: 'min_o3', type: 'float'},
-            {name: 'downquar_o3', type: 'float'},
-            {name: 'median_o3', type: 'float'},
-            {name: 'upquar_o3', type: 'float'},
-            {name: 'max_o3', type: 'float'},
             {name: 'value_co', type: 'float'},
-            {name: 'min_co', type: 'float'},
-            {name: 'downquar_co', type: 'float'},
-            {name: 'median_co', type: 'float'},
-            {name: 'upquar_co', type: 'float'},
-            {name: 'max_co', type: 'float'},
             {name: 'value_so2', type: 'float'},
-            {name: 'min_so2', type: 'float'},
-            {name: 'downquar_so2', type: 'float'},
-            {name: 'median_so2', type: 'float'},
-            {name: 'upquar_so2', type: 'float'},
-            {name: 'max_so2', type: 'float'},
-            {name: 'value_pm25', type: 'float'},
-            {name: 'min_pm25', type: 'float'},
-            {name: 'downquar_pm25', type: 'float'},
-            {name: 'median_pm25', type: 'float'},
-            {name: 'upquar_pm25', type: 'float'},
-            {name: 'max_pm25', type: 'float'}
+            {name: 'value_pm25', type: 'float'}
         ]
     });
     store = Ext.create('Ext.data.ArrayStore', {
@@ -132,13 +87,11 @@ Ext.onReady(function() {
             collapsible: true,
             collapsed: false,
             split: true,
-            autoScroll: true,
-            
-            title: 'Options',
+            title: 'Customize',
+            width: '18%',
             minWidth: 220,
-            maxWidth: 250,
             xtype: 'form',
-            bodyPadding: 0,
+            bodyPadding: 5,
             id: 'form',
             // The form will submit an AJAX request to this URL when submitted
             url: 'php/process.php',
@@ -149,23 +102,6 @@ Ext.onReady(function() {
             },
             // The fields
             items: [{
-                border:0,
-    width: 220,
-    height: 500,
-    layout: {
-        // layout-specific configs go here
-        type: 'accordion',
-        titleCollapse: true,
-        animate: true,
-        activeOnTop: true
-    },
-    items: [{
-        title: 'Basic',
-        layout: 'anchor',
-            defaults: {
-                anchor: '100%'
-            },
-        items: [{
                 xtype: 'datefield',
                 fieldLabel: 'Date',
                 name: 'date',
@@ -212,83 +148,7 @@ Ext.onReady(function() {
                 displayField: 'name',
                 value: 'md',
                 valueField: 'send'
-            }]
-    },{
-        title: 'Download options',
-        items:[{
-            xtype: 'fieldcontainer',
-            fieldLabel: 'Chất',
-            defaultType: 'checkboxfield',
-            items: [
-                {
-                    boxLabel  : 'CH4',
-                    inputValue: 1,
-                    checked   : true,
-                    id        : 'checkbox1'
-                }, {
-                    boxLabel  : 'NMHC',
-                    inputValue: 2,
-                    checked   : true,
-                    id        : 'checkbox2'
-                }, {
-                    boxLabel  : 'NO',
-                    inputValue: 3,
-                    checked   : true,
-                    id        : 'checkbox3'
-                }, {
-                    boxLabel  : 'NO2',
-                    inputValue: 4,
-                    checked   : true,
-                    id        : 'checkbox4'
-                }, {
-                    boxLabel  : 'NOx',
-                    inputValue: 5,
-                    checked   : true,
-                    id        : 'checkbox5'
-                }, {
-                    boxLabel  : 'O3',
-                    inputValue: 6,
-                    checked   : true,
-                    id        : 'checkbox6'
-                }, {
-                    boxLabel  : 'CO',
-                    inputValue: 7,
-                    checked   : true,
-                    id        : 'checkbox7'
-                }, {
-                    boxLabel  : 'SO2',
-                    inputValue: 8,
-                    checked   : true,
-                    id        : 'checkbox8'
-                }, {
-                    boxLabel  : 'PM2.5',
-                    inputValue: 9,
-                    checked   : true,
-                    id        : 'checkbox9'
-                }
-            ]
-    },{
-                xtype: 'button',
-                    text: 'Download',
-                    listeners:{
-                        click: {
-                            fn: function(){
-                                var choose='';
-                                var data = Ext.getCmp('form').getForm();
-                                for (var i=1;i<=9;i++) {
-                                    if (Ext.getCmp('checkbox'+i).getValue()) choose+=Ext.getCmp('checkbox'+i).getSubmitValue();
-                                }
-                                if (choose.length!=0) {window.location='php/download.php?date='+data.findField('date').getSubmitValue()+'&time='+data.findField('time').getSubmitValue()+'&view='+data.findField('view').getSubmitValue()+'&choose='+choose;}
-                                else Ext.Msg.alert('Failed','Phải chọn ít nhất một chất');
-                              
-                                  
-                                    
-                            }
-                        }    
-                    }
-                }]}]
-            }
-            ],
+            }],
                     // Reset and Submit buttons
             buttons: [{
                 text: 'Reset',
@@ -333,7 +193,7 @@ Ext.onReady(function() {
             collapsible: true,
             split: true,
             width: '50%',
-            minWidth: 400,
+            minWidth: 530,
             xtype: 'grid',
             store: store,
             stateful: true,
@@ -510,6 +370,19 @@ Ext.onReady(function() {
                         showdata(Ext.getCmp('form').getForm().findField('subs').getValue());
                         var tool=Ext.getCmp('toolbar');
                         tool.getComponent('delete').disable();                    
+                    }
+                },{
+                    text: 'Download',
+                    listeners:{
+                        click: {
+                            fn: function(){
+                                var data = Ext.getCmp('form').getForm();
+                                window.location='php/download.php?date='+data.findField('date').getSubmitValue()+'&time='+data.findField('time').getSubmitValue()+'&view='+data.findField('view').getSubmitValue();
+                              
+                                  
+                                    
+                            }
+                        }    
                     }
                 }]
             },

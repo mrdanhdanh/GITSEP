@@ -10,8 +10,8 @@ function server($dataview){
     while ($row = pg_fetch_array($result)) {
         $data[$count][0]=$row[1];
         $data[$count][1]=$row[2];
-        for ($i=2;$i<=10;$i++) {
-            $data[$count][$i]=round($row[$i+1],4);
+        for ($i=2;$i<=55;$i++) {
+            $data[$count][$i]=round($row[$i+1],3);
         }
         $count++;
     }
@@ -58,16 +58,11 @@ switch ($_POST["view"])
         $count=0;
         while ($row = pg_fetch_array($result)) {
             $data[$count][0]=$row[1];
-            for ($i=1;$i<=9;$i++) {
-                $data[$count][$i]=round($row[$i+1],4);
+            for ($i=1;$i<=54;$i++) {
+                $data[$count][$i]=round($row[$i+1],3);
             }
             $count++;
         }
-        break;
-    case "w":
-        $dataview="air_quality_data_week";
-        $time=substr($time,0,7);
-        $timeview="YYYY-MM";
         break;
     case "m":
         $dataview="air_quality_data_month";

@@ -1,23 +1,151 @@
-<!DOCTYPE html>
-<html lang="">
-<head>
-  <meta charset="UTF-8">
-  <title></title>
-</head>
-<body>
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highcharts Example</title>
 
-<p id="demo"></p>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript">
+$(function () {
+    $('#container').highcharts({
 
-<script>
-qcvn = {
-4:{'avg_1h':200,'avg_24h':100,'avg_1y':40,'klr':46},
-6:{'avg_1h':200,'avg_24h':0,'avg_1y':0,'klr':48},
-7:{'avg_1h':30000,'avg_24h':0,'avg_1y':0,'klr':28},
-8:{'avg_1h':350,'avg_24h':125,'avg_1y':50,'klr':64},
-9:{'avg_1h':0,'avg_24h':50,'avg_1y':25,'klr':0}
-};
-document.getElementById("demo").innerHTML = qcvn[4]['klr'];
-</script>
+	    chart: {
+        
+        zoomType: 'x',
+        style: {fontFamily: 'Roboto'},
+        selectionMarkerFill: 'rgba(151, 224, 135, 0.25)',
+        resetZoomButton: {
+                position: {
+                    // align: 'right', // by default
+                    // verticalAlign: 'top', // by default
+                    x: -10,
+                    y: 80
+                },
+                relativeTo: 'chart',
+                theme: {
+                    fill: 'white',
+                    stroke: 'silver',
+                    r: 5,
+                    states: {
+                        hover: {
+                            fill: '#00a512',
+                            style: {
+                                color: 'white'
+                            }
+                        }
+                    }
+                }
+        }
+    },
+	    title: {
+	        text: 'Highcharts Box Plot Example'
+	    },
+	    
+	    legend: {
+	        enabled: false
+	    },
+	
+	    xAxis: {
+	        
+	        title: {
+	            text: 'Thời gian'
+	        },
+            type: 'datetime'
+	    },
+	    
+	    yAxis: {
+	        title: {
+	            text: 'Observations'
+	        },
+	        plotLines: [{
+	            value: 932,
+	            color: 'red',
+	            width: 1,
+	            label: {
+	                text: 'Trung bình: 932',
+	                align: 'center',
+	                style: {
+	                    color: 'gray'
+	                }
+	            }
+	        }]  
+	    },
+	plotOptions: {
+        boxplot:{
+            groupPadding: 0,
+            medianColor: '#FF0000',
+            lineWidth: 1,
+            pointWidth: 10,
+            color: '#00B050',
+            stemColor: '#A9D18E',
+            stemDashStyle: 'dot',
+            whiskerColor: '#7030c0',
+            whiskerLength: '100%',
+            whiskerWidth: 3
+        },
+        spline: {
+            allowPointSelect: true,
+            color: '#707680',
+            marker: {
+                enabled: true,
+                states: {
+                    select: {
+                        fillColor: '#25e57b',
+                        lineColor: '#25e57b',
+                        lineWidth: '3px'
+                    }
+                }
+            },
+            point: {
+            cursor: 'pointer',
+            turboThreshold: 100
+        }
 
-</body>
+    }},
+        tooltip:{
+            shared: true,
+            hidDelay: 300,
+            borderRadius: 10
+        },
+	    series: [{
+	        name: 'Boxplot',
+            type: 'boxplot',
+	        data: [
+	            [Date.UTC(2013, 1, 7),760, 801, 848, 895, 965],
+	            [Date.UTC(2013, 1, 8),733, 853, 939, 980, 1080],
+	            [Date.UTC(2013, 1, 9),714, 762, 817, 870, 918],
+	            [Date.UTC(2013, 1, 10),724, 802, 806, 871, 950],
+	            [Date.UTC(2013, 1, 11),834, 836, 864, 882, 910]
+	        ],
+	        tooltip: {
+	            headerFormat: '<em>Thời gian: {point.key}</em><br/>'
+	        }
+	    }, {
+	        name: 'Trung bình',
+	        color: Highcharts.getOptions().colors[0],
+	        type: 'spline',
+	        data: [ // x, y positions where 0 is the first category
+	               [Date.UTC(2013, 1, 7),796],
+	            [Date.UTC(2013, 1, 8),763],
+	            [Date.UTC(2013, 1, 9),817],
+	            [Date.UTC(2013, 1, 10),754],
+	            [Date.UTC(2013, 1, 11),864]
+	        ],
+	        
+	        tooltip: {
+	            pointFormat: '<span style="color:{series.color}">\u25CF</span> <b>{series.name}</b>: {point.y}'
+	        }
+	    }]
+	
+	});
+});
+		</script>
+	</head>
+	<body>
+<script src="javascript/highcharts/highcharts.js"></script>
+<script src="javascript/highcharts/highcharts-more.js"></script>
+<script src="javascript/highcharts/exporting.js"></script>
+
+<div id="container" style="height: 400px; margin: auto; min-width: 310px; max-width: 600px"></div>
+	</body>
 </html>

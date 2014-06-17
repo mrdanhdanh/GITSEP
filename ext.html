@@ -10,6 +10,7 @@
     <script src="javascript/jquery-2.1.1.min.js"></script>
     <script src="javascript/jquery.ba-resize.min.js"></script>
     <script src="javascript/highcharts/highcharts.js"></script>
+    <script src="javascript/highcharts/highcharts-more.js"></script>
     <script src="javascript/highcharts/no-data-to-display.js"></script>
     <script src="javascript/highcharts/exporting.js"></script>
     <script src="javascript/ext.js"></script> <!-- Script chính cho viewport và các thành phần khác --> 
@@ -20,7 +21,6 @@
 
 options = {
     chart: {
-        type: 'spline',
         zoomType: 'x',
         style: {fontFamily: 'Roboto'},
         selectionMarkerFill: 'rgba(151, 224, 135, 0.25)',
@@ -94,22 +94,31 @@ options = {
         }]
     },
     
-    tooltip: {
-        enabled: true,
-        hideDelay: 100,
-        formatter: function() {
-            return 'Thời gian: ' + Highcharts.dateFormat('%H:%M', this.x)+'<br/>'+
-                'Nồng độ: '+ this.y;
-        }
-    },
+    tooltip:{
+            shared: true,
+            hidDelay: 300,
+            borderRadius: 10
+        },
     legend: {
         enabled: false
     },
     exporting: {
         enabled: true
     },
-    plotOptions: {                         
-        series: {
+    plotOptions: {
+        boxplot:{
+            groupPadding: 0,
+            medianColor: '#FF0000',
+            lineWidth: 1,
+            pointWidth: 10,
+            color: '#00B050',
+            stemColor: '#A9D18E',
+            stemDashStyle: 'dot',
+            whiskerColor: '#7030c0',
+            whiskerLength: '100%',
+            whiskerWidth: 3
+        },
+        spline: {
             allowPointSelect: true,
             marker: {
                 enabled: true,
@@ -123,6 +132,7 @@ options = {
             },
             events:{
                 mouseOut: function(){
+                    if (Ext.getCmp('view').getValue()=='h') {
                         rect.destroy();
                             text.destroy();
                         if (maxaqi24h<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)'}
@@ -151,7 +161,7 @@ options = {
                 zIndex: 4
             })
             .add();
-                    }
+                    }}
             },
             point: {
                 events: {
@@ -181,8 +191,8 @@ options = {
 									stand=arrayqcvn[sub]['avg_1h']/arrayqcvn[sub]['klr']*24.45/1000;
 									} else stand=arrayqcvn[sub]['avg_1h']/arrayqcvn[sub]['klr']*24.45;
 							if (i==4) stand=300;
-                            if (maxaqi1h!=Math.max(data[haveqcvn[i]+ex]/stand*100,maxaqi1h)) {
-                                maxaqi1h=Math.max(data[haveqcvn[i]+ex]/stand*100,maxaqi1h);
+                            if (maxaqi1h!=Math.max(data[(sub-1)*6+ex]/stand*100,maxaqi1h)) {
+                                maxaqi1h=Math.max(data[(sub-1)*6+ex]/stand*100,maxaqi1h);
                                 subname=arrayqcvn[sub]['name'];
                             }
 							
@@ -227,7 +237,35 @@ options = {
         },
 
     },
-    series: [{}],
+    series: [{
+	        name: 'Boxplot',
+            type: 'boxplot',
+	        data: [
+	            [Date.UTC(2013, 1, 7),760, 801, 848, 895, 965],
+	            [Date.UTC(2013, 1, 8),733, 853, 939, 980, 1080],
+	            [Date.UTC(2013, 1, 9),714, 762, 817, 870, 918],
+	            [Date.UTC(2013, 1, 10),724, 802, 806, 871, 950],
+	            [Date.UTC(2013, 1, 11),834, 836, 864, 882, 910]
+	        ],
+	        tooltip: {
+	            headerFormat: '<em>Thời gian: {point.key}</em><br/>'
+	        }
+	    }, {
+	        name: 'Trung bình',
+	        color: Highcharts.getOptions().colors[0],
+	        type: 'spline',
+	        data: [ // x, y positions where 0 is the first category
+	               [Date.UTC(2013, 1, 7),796],
+	            [Date.UTC(2013, 1, 8),763],
+	            [Date.UTC(2013, 1, 9),817],
+	            [Date.UTC(2013, 1, 10),754],
+	            [Date.UTC(2013, 1, 11),864]
+	        ],
+	        
+	        tooltip: {
+	            pointFormat: '<span style="color:{series.color}">\u25CF</span> <b>{series.name}</b>: {point.y}'
+	        }
+	    }],
     lang: {
         noData: "Không có số liệu theo yêu cầu"
     },
@@ -254,6 +292,7 @@ options = {
 };
     function showdata(subs){
         options.series[0].data=[];
+        options.series[1].data=[];
         var data=Ext.getStore('store').proxy.data;
         var date=Ext.getCmp('date').getSubmitValue();
         options.yAxis.title.text= 'Nồng độ ('+unit[subs-1]+')';
@@ -262,7 +301,7 @@ options = {
         
         
         if (haveqcvn.indexOf(subs)>=0) {
-            switch(Ext.getCmp('form').getForm().findField('view').getValue()) {
+            switch(Ext.getCmp('view').getValue()) {
 	case 'h':
         view='avg_1h';
         break;
@@ -289,16 +328,19 @@ options = {
 		}
         if (data.length!=0){
             if (Ext.getCmp('view').getValue()=='d') {
-                ex=0;
+                ex=1;
+                var col = (subs-1)*6 + ex;
                 for (var i=0;i<data.length;i++) {
             var jyea=data[i][0].substr(0,4);
             var jmon=data[i][0].substr(5,2)-1;
             var jday=data[i][0].substr(8,2);
-            options.series[0].data.push([Date.UTC(jyea,jmon,jday),data[i][subs+ex]]);  
+            options.series[0].data.push([Date.UTC(jyea,jmon,jday),data[i][col+1],data[i][col+2],data[i][col+3],data[i][col+4],data[i][col+5]]);  
+            options.series[1].data.push([Date.UTC(jyea,jmon,jday),data[i][col]]);
             };
             $('#chart-innerCt').highcharts(options); }
             else {
-                ex=1;
+                ex=2;
+                var col = (subs-1)*6 + ex;
         for (var i=0;i<data.length;i++) {
             var jyea=data[i][0].substr(0,4);
             var jmon=data[i][0].substr(5,2)-1;
@@ -306,7 +348,8 @@ options = {
             var jhou=data[i][1].substr(0,2);
             var jmin=data[i][1].substr(3,2);
             var jsec=data[i][1].substr(6,2);
-            options.series[0].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),data[i][subs+ex]]);  
+            options.series[0].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),data[i][col+1],data[i][col+2],data[i][col+3],data[i][col+4],data[i][col+5]]);
+            options.series[1].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),data[i][col]]);
         };
               if (Ext.getCmp('view').getValue()=='h') {drawchartaqi();}
             else $('#chart-innerCt').highcharts(options);}        
@@ -320,7 +363,7 @@ options = {
 		for (var i=0;i<=4;i++) {
             
 			for (var y=0;y<store.proxy.data.length;y++) {
-                var value=store.proxy.data[y][haveqcvn[i]+ex];
+                var value=store.proxy.data[y][(haveqcvn[i]-1)*6+ex];
 				maxavg1h[i]=Math.max(maxavg1h[i],value);
                 avg24h[i]=avg24h[i]+value;
 			}

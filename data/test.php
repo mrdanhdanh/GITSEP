@@ -8,7 +8,7 @@
 	$file->setFlags(SplFileObject::READ_CSV);
 	$file->seek($seek);
 	$i=0;
-	while ((!$file->eof()) and ($i<=300)) {
+	while ((!$file->eof()) and ($i<=99)) {
 		$ar=$file->fgetcsv();
 		
 		for ($y=0;$y<=count($ar)-1;$y++){

@@ -135,11 +135,11 @@ options = {
                     if (Ext.getCmp('view').getValue()=='h') {
                         rect.destroy();
                             text.destroy();
-                        if (maxaqi24h<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)'}
-                        else if (maxaqi24h<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';}
-                        else if (maxaqi24h<=200) {fillcolor='rgb(255, 167, 0)';strokecolor='rgba(255, 167, 0, 0.75)';}
-                        else if (maxaqi24h<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';}
-                        else {fillcolor='rgb(162, 92, 3)';strokecolor='rgb(162, 92, 3, 0.75)';}
+                        if (maxaqi24h<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)';textcolor='#000000';}
+                        else if (maxaqi24h<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';textcolor='#000000';}
+                        else if (maxaqi24h<=200) {fillcolor='rgb(255, 167, 0)';strokecolor='rgba(255, 167, 0, 0.75)';textcolor='#000000';}
+                        else if (maxaqi24h<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';textcolor='#ffffff';}
+                        else {fillcolor='rgb(162, 92, 3)';strokecolor='rgb(162, 92, 3, 0.75)';textcolor='#ffffff';}
         var chart=$('#chart-innerCt').highcharts();
         text = chart.renderer.text(
                 'AQI (24h) = '+Math.round(maxaqi24h)+' ('+subname24h+')', 
@@ -148,7 +148,7 @@ options = {
             ).attr({
                 zIndex: 5
             }).css({
-                color: '#ffffff',
+                color: textcolor,
                 fontSize: '16px'
             }).add();
         
@@ -197,11 +197,11 @@ options = {
                             }
 							
 						}
-						if (maxaqi1h<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)'}
-                        else if (maxaqi1h<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';}
-                        else if (maxaqi1h<=200) {fillcolor='rgb(255, 167, 0)';strokecolor='rgba(255, 167, 0, 0.75)';}
-                        else if (maxaqi1h<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';}
-                        else {fillcolor='rgb(162, 92, 3)';strokecolor='rgb(162, 92, 3, 0.75)';}
+						if (maxaqi1h<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)';textcolor='#000000';}
+                        else if (maxaqi1h<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';textcolor='#000000';}
+                        else if (maxaqi1h<=200) {fillcolor='rgb(255, 167, 0)';strokecolor='rgba(255, 167, 0, 0.75)';textcolor='#000000';}
+                        else if (maxaqi1h<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';textcolor='#ffffff';}
+                        else {fillcolor='rgb(162, 92, 3)';strokecolor='rgb(162, 92, 3, 0.75)';textcolor='#ffffff';}
                             rect.destroy();
                             text.destroy();
 						var chart=$('#chart-innerCt').highcharts();
@@ -213,7 +213,7 @@ options = {
             ).attr({
                 zIndex: 5
             }).css({
-                color: '#ffffff',
+                color: textcolor,
                 fontSize: '16px'
             }).add();
         
@@ -252,10 +252,10 @@ options = {
 	        }
 	    }, {
 	        name: 'Trung bình',
-	        color: Highcharts.getOptions().colors[0],
 	        type: 'spline',
+            id: 'line',
 	        data: [ // x, y positions where 0 is the first category
-	               [Date.UTC(2013, 1, 7),796],
+                [Date.UTC(2013, 1, 7),796],
 	            [Date.UTC(2013, 1, 8),763],
 	            [Date.UTC(2013, 1, 9),817],
 	            [Date.UTC(2013, 1, 10),754],
@@ -335,7 +335,8 @@ options = {
             var jmon=data[i][0].substr(5,2)-1;
             var jday=data[i][0].substr(8,2);
             options.series[0].data.push([Date.UTC(jyea,jmon,jday),data[i][col+1],data[i][col+2],data[i][col+3],data[i][col+4],data[i][col+5]]);  
-            options.series[1].data.push([Date.UTC(jyea,jmon,jday),data[i][col]]);
+            options.series[1].data.push({x:Date.UTC(jyea,jmon,jday),y:data[i][col]});
+                    if (data[i][col]<0 || data[i][col]>500) options.series[1].data[i].color='red';
             };
             $('#chart-innerCt').highcharts(options); }
             else {
@@ -349,7 +350,9 @@ options = {
             var jmin=data[i][1].substr(3,2);
             var jsec=data[i][1].substr(6,2);
             options.series[0].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),data[i][col+1],data[i][col+2],data[i][col+3],data[i][col+4],data[i][col+5]]);
-            options.series[1].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),data[i][col]]);
+            options.series[1].data.push({x:Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),y:data[i][col]});
+            if (data[i][col]<0 || data[i][col]>500) options.series[1].data[i].color='red';
+
         };
               if (Ext.getCmp('view').getValue()=='h') {drawchartaqi();}
             else $('#chart-innerCt').highcharts(options);}        
@@ -386,11 +389,11 @@ options = {
             else maxaqi24h=Math.max(maxavg1h[i]/stand1h*100,avg24h[i]/stand24h*100,maxaqi24h);
             if (tam!=maxaqi24h) subname24h=arrayqcvn[sub]['name'];
 		}
-        if (maxaqi24h<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)'}
-                        else if (maxaqi24h<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';}
-                        else if (maxaqi24h<=200) {fillcolor='rgb(255, 167, 0)';strokecolor='rgba(255, 167, 0, 0.75)';}
-                        else if (maxaqi24h<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';}
-                        else {fillcolor='rgb(162, 92, 3)';strokecolor='rgb(162, 92, 3, 0.75)';}
+        if (maxaqi24h<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)';textcolor='#000000';}
+                        else if (maxaqi24h<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';textcolor='#000000';}
+                        else if (maxaqi24h<=200) {fillcolor='rgb(255, 167, 0)';strokecolor='rgba(255, 167, 0, 0.75)';textcolor='#000000';}
+                        else if (maxaqi24h<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';textcolor='#ffffff';}
+                        else {fillcolor='rgb(162, 92, 3)';strokecolor='rgb(162, 92, 3, 0.75)';textcolor='#ffffff';}
         $('#chart-innerCt').highcharts(options);
         var chart=$('#chart-innerCt').highcharts();
         text = chart.renderer.text(
@@ -400,7 +403,7 @@ options = {
             ).attr({
                 zIndex: 5
             }).css({
-                color: '#ffffff',
+                color: textcolor,
                 fontSize: '16px'
             }).add();
         

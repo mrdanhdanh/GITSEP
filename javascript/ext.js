@@ -172,7 +172,7 @@ Ext.onReady(function() {
                 id: 'date',
                 format: 'd/m/Y',
                 submitFormat: 'Y/m/d',
-                value: '28/02/2014',
+                value: '01/05/2013',
                 allowBlank: false
             },{
                 xtype: 'timefield',

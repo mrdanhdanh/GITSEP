@@ -1,4 +1,6 @@
-
+.row-color {
+	background-color: "red" !important;
+}
 .icon-user {
     background-image: url("images/user.png") !important;
 }

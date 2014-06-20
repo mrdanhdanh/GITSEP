@@ -76,6 +76,7 @@ options = {
         }
     },
     yAxis: {
+		min: 0,
         title: {
             text: 'Nồng độ'
         },
@@ -179,9 +180,7 @@ options = {
                         var grid = Ext.getCmp('mygrid');
                         var store=Ext.getStore('store');
                         var rowid=getId(this.x);
-                        var page=store.getPageFromRecordIndex(rowid);
-                        var row=rowid-((page-1)*itemsPerPage);
-						var data=store.proxy.data[row];
+						var data=store.proxy.data[rowid];
 						var maxaqi1h=0;
                         var subname=null;
 						for (var i=0;i<=4;i++) {
@@ -240,13 +239,7 @@ options = {
     series: [{
 	        name: 'Boxplot',
             type: 'boxplot',
-	        data: [
-	            [Date.UTC(2013, 1, 7),760, 801, 848, 895, 965],
-	            [Date.UTC(2013, 1, 8),733, 853, 939, 980, 1080],
-	            [Date.UTC(2013, 1, 9),714, 762, 817, 870, 918],
-	            [Date.UTC(2013, 1, 10),724, 802, 806, 871, 950],
-	            [Date.UTC(2013, 1, 11),834, 836, 864, 882, 910]
-	        ],
+	        data: [],
 	        tooltip: {
 	            headerFormat: '<em>Thời gian: {point.key}</em><br/>'
 	        }
@@ -254,13 +247,7 @@ options = {
 	        name: 'Trung bình',
 	        type: 'spline',
             id: 'line',
-	        data: [ // x, y positions where 0 is the first category
-                [Date.UTC(2013, 1, 7),796],
-	            [Date.UTC(2013, 1, 8),763],
-	            [Date.UTC(2013, 1, 9),817],
-	            [Date.UTC(2013, 1, 10),754],
-	            [Date.UTC(2013, 1, 11),864]
-	        ],
+	        data: [],
 	        
 	        tooltip: {
 	            pointFormat: '<span style="color:{series.color}">\u25CF</span> <b>{series.name}</b>: {point.y}'
@@ -405,7 +392,8 @@ options = {
             }).css({
                 color: textcolor,
                 fontSize: '16px'
-            }).add();
+            }).on('click',function(){aqitable()})
+        .add();
         
         var box = text.getBBox();
         rect=chart.renderer.rect(box.x - 5, box.y - 5, box.width + 10, box.height + 10, 0)
@@ -415,10 +403,20 @@ options = {
                 'stroke-width': 1,
                 zIndex: 4
             })
+        .on('click',function(){aqitable()})
             .add();
         
     }
-    function getId(value){  
+        function aqitable(){
+            Ext.create('Ext.window.Window', {
+                resizable: false,
+    height:355,
+    width: 462,
+    layout: 'fit',
+    html: '<table class="aqi-table" style="width:450px"><tr style="background-color:#9d9d9d;text-align:center;color:white"><th class="aqi-th">Khoảng giá tri AQI</th><th class="aqi-th">Chất lượng không khí</th><th class="aqi-th">Ảnh hưởng sức khỏe</th><tr style="background-color:#00b1ff;text-align:center;color:black"><td class="aqi-td" style="width: 100px">0 - 50</td><td class="aqi-td" style="width: 120px">Tốt</td><td class="aqi-td">Không ảnh hưởng đến sức khòe</td></tr><tr style="background-color:#ff0;text-align:center;color:black">  <td class="aqi-td" style="width: 100px">51 - 100</td>  <td class="aqi-td" style="width: 120px">Trung bình</td> <td class="aqi-td">Nhóm nhạy cảm nên hạn chế thời gian ở bên ngoài</td></tr><tr style="background-color:#ffa700;text-align:center;color:black">  <td class="aqi-td" style="width: 100px">101 - 200</td>  <td class="aqi-td" style="width: 120px">Kém</td>  <td class="aqi-td">Nhóm nhạy cảm cần hạn chế thời gian ở bên ngoài</td></tr><tr style="background-color:#f00;text-align:center;color:white">  <td class="aqi-td" style="width: 100px">201 - 300</td>  <td class="aqi-td" style="width: 120px">Xấu</td> <td class="aqi-td">Nhóm nhạy cảm tránh ra ngoài. Những người khác hạn chế ở bên ngoài</td></tr><tr style="background-color:#a25c03;text-align:center;color:white"> <td class="aqi-td" style="width: 100px">Trên 300</td>  <td class="aqi-td" style="width: 120px">Nguy hại</td>  <td class="aqi-td">Mọi người nên ở trong nhà</td></tr></table><p style="font-size:16px">Ghi chú: Nhóm nhạy cảm bao gồm: trẻ em, người già và những người mắc bệnh hô hấp <i>(Quyết định 878/QĐ-TCMT)</i></p>'
+}).show();
+        }
+        function getId(value){  
         var ar=options.series[0].data;
         for (var i=0;i<ar.length;i++){
             if (ar[i][0]==value || ar[i].x==value) break;

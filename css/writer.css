@@ -1,3 +1,10 @@
+.aqi-table,.aqi-th,.aqi-td
+{
+font-size: 16px;
+border:1px solid black;
+border-collapse:collapse;
+white-space:normal;
+}
 .row-color {
 	background-color: "red" !important;
 }

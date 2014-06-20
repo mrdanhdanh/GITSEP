@@ -17,7 +17,7 @@ Ext.onReady(function() {
         subs = Ext.create('Ext.data.Store', {
             fields: ['send', 'name'],
             data : [
-                {"send":1, "name":"Metan"},
+                {"send":1, "name":"CH4"},
                 {"send":2, "name":"NMHC"},
                 {"send":3, "name":"NO"},
                 {"send":4, "name":"NO2"},
@@ -133,7 +133,6 @@ Ext.onReady(function() {
             collapsed: false,
             split: true,
             autoScroll: true,
-            
             title: 'Options',
             minWidth: 220,
             maxWidth: 250,
@@ -307,7 +306,6 @@ Ext.onReady(function() {
                             waitMsg: 'Đang chuyển yêu cầu...',
                             success: function(form, action) {
                                 store.proxy.data=action.result.root;
-                                qcvn=action.result.qcvn;
                                 var sub=form.findField('subs').getValue();
                                 var radioid='radio'+sub;
                                 if (Ext.getCmp(radioid).getValue()) {showdata(sub);}
@@ -318,8 +316,9 @@ Ext.onReady(function() {
                             },
                             failure: function(form, action) {
                                 store.proxy.data=[];
+                                Ext.getCmp('mygrid').getStore().removeAll();
+                                Ext.getCmp('paging').doRefresh();
                                 showdata(form.findField('subs').getValue());
-                                qcvn=0;
                             }
                         });
                     }
@@ -370,7 +369,7 @@ Ext.onReady(function() {
                         allowBlank: false
                     }
                 },{
-                    text : 'Metan',
+                    text : 'CH4',
                     minWidth :60,
                     width : '7%',
                     sortable : true,                  
@@ -639,6 +638,11 @@ Ext.onReady(function() {
                     defaults: {
                         flex: 0,
                         listeners:{
+                            mouseover:{
+                                fn: function(){
+                                    alert('test');
+                                }
+                            },
                             change:{
                                 fn: function(){
                                     if (this.value) {    

@@ -29,15 +29,20 @@ function server($dataview){
     global $result;
     global $time;
     global $data;
+    global $choose;
     if ($time=='null') {$result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' ORDER BY date,time");}
     else  $result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' AND date_trunc('hour',time)='$time' ORDER BY date,time");
     $count=0;
     while ($row = pg_fetch_array($result)) {
         $data[$count][0]=$row[1];
         $data[$count][1]=$row[2];
-        for ($i=1;$i<=9;$i++) {
-            $data[$count][$i]=round($row[($i-1)*6+3],3);
-        }
+        $y=2;
+            for ($i=1;$i<=9;$i++) {
+                if ($choose[$i-1]=='true') {
+                    $data[$count][$y]=round($row[($i-1)*6+3],3);
+                    $y++;
+                }
+            }
         $count++;
     }
 }
@@ -58,14 +63,12 @@ $stat = pg_connection_status($db_conn);
 $data=[];
 $date=$_GET["date"];
 $time=$_GET["time"];
+$choose=$_GET["choose"];
 //Collect data value
 switch ($_GET["view"])
 {
     case "raw":
         server("air_quality_data_raw");
-        break;
-    case "1p":
-        server("air_quality_data_1min");
         break;
     case "5p":
         server("air_quality_data_5min");
@@ -82,8 +85,12 @@ switch ($_GET["view"])
         $count=0;
         while ($row = pg_fetch_array($result)) {
             $data[$count][0]=$row[1];
+            $y=1;
             for ($i=1;$i<=9;$i++) {
-                $data[$count][$i]=round($row[$i+1],4);
+                if ($choose[$i-1]='true') {
+                    $data[$count][$y]=round($row[$i+1],4);
+                    $y++;
+                }
             }
             $count++;
         }
@@ -101,7 +108,7 @@ switch ($_GET["view"])
         $dataview="data_raw";
 }
 pg_close($db_conn);
- 
+
 /** Error reporting */
 error_reporting(E_ALL);
 ini_set('display_errors', TRUE);
@@ -128,7 +135,11 @@ $objPHPExcel->getProperties()->setCreator("SEP")
 							 ->setCategory("");
 
 // Add data
-$head=array('Date','Time','CH4 (ppm)','NM2 (ppm)','NO (ppb)','NO2 (ppb)','NOx (ppb)','O3 (ppb)','CO (ppm)','SO2 (ppb)','PM25 (ug/Nm3)');
+$headraw=array('Date','Time','CH4 (ppm)','NM2 (ppm)','NO (ppb)','NO2 (ppb)','NOx (ppb)','O3 (ppb)','CO (ppm)','SO2 (ppb)','PM25 (ug/Nm3)');
+$head=array('Date','Time');
+for ($i=0;$i<=8;$i++) {
+    if ($choose[$i]=='true') {array_push($head,$headraw[$i+2]);}
+}
 $objPHPExcel->getActiveSheet()->getStyle('C1:Z1')->getFill()->applyFromArray(
     array(
         'type'     => PHPExcel_Style_Fill::FILL_SOLID,

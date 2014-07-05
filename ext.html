@@ -326,7 +326,20 @@ options = {
                     if (data[i][col]<0 || data[i][col]>500) options.series[1].data[i].color='red';
             };
             $('#chart-innerCt').highcharts(options); }
-            else {
+            else  if (Ext.getCmp('view').getValue()=='5p') {
+                for (var i=0;i<data.length;i++) {
+            var jyea=data[i][0].substr(0,4);
+            var jmon=data[i][0].substr(5,2)-1;
+            var jday=data[i][0].substr(8,2);
+            var jhou=data[i][1].substr(0,2);
+            var jmin=data[i][1].substr(3,2);
+            var jsec=data[i][1].substr(6,2);
+                    options.series[1].data.push({x:Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),y:data[i][subs+1]});
+            if (data[i][col]<0 || data[i][col]>500) options.series[1].data[i].color='red';
+                };
+                 $('#chart-innerCt').highcharts(options);
+            }
+                else {
                 ex=2;
                 var col = (subs-1)*6 + ex;
         for (var i=0;i<data.length;i++) {
@@ -417,7 +430,7 @@ options = {
 }).show();
         }
         function getId(value){  
-        var ar=options.series[0].data;
+        var ar=options.series[1].data;
         for (var i=0;i<ar.length;i++){
             if (ar[i][0]==value || ar[i].x==value) break;
         }

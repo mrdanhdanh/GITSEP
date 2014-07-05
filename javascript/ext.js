@@ -5,7 +5,6 @@ Ext.onReady(function() {
     var typeview = Ext.create('Ext.data.Store', {
         fields: ['send', 'name'],
         data : [
-            {"send":"1p", "name":"1 phút"},
             {"send":"5p", "name":"5 phút"},
             {"send":"15p", "name":"15 phút"},
             {"send":"h", "name":"Giờ"},
@@ -37,6 +36,22 @@ Ext.onReady(function() {
         });
     // Tạo khung data grid
     itemsPerPage=20;
+    Ext.define('Store.5MinData',{
+        extend: 'Ext.data.Model',
+        fields: [
+            {name: 'date', type: 'date', dateFormat: 'Y-m-d'},
+            {name: 'time', type: 'date', dateFormat: 'H:i:s'},
+            {name: 'value_ch4', type: 'float'},
+            {name: 'value_nm', type: 'float'},
+            {name: 'value_no', type: 'float'},
+            {name: 'value_no2', type: 'float'},
+            {name: 'value_nox', type: 'float'},
+            {name: 'value_o3', type: 'float'},
+            {name: 'value_co', type: 'float'},
+            {name: 'value_so2', type: 'float'},
+            {name: 'value_pm25', type: 'float'}
+        ]
+    });
     Ext.define('Store.AddData',{
         extend: 'Ext.data.Model',
         fields: [
@@ -124,9 +139,13 @@ Ext.onReady(function() {
         //Tạo item, mỗi item tương ứng 1 vùng trên web, đối với viewport sẽ chiếm toàn nền web
         items: [{
             region: 'north', //Phía trên cùng
-            html: '<h1 class="x-panel-header">SEP</h1>',
             border: false,
-            margins: '0 0 5 0'
+            margins: '0 0 5 0',
+            items:[{
+                xtype: 'image',
+                height: 80,
+                src: 'images/logo-sep.png'
+            }]
         }, {
             region: 'west', //Phía bên trái, form
             collapsible: true,
@@ -275,9 +294,9 @@ Ext.onReady(function() {
                                 var choose='';
                                 var data = Ext.getCmp('form').getForm();
                                 for (var i=1;i<=9;i++) {
-                                    if (Ext.getCmp('checkbox'+i).getValue()) choose+=Ext.getCmp('checkbox'+i).getSubmitValue();
+                                    choose+='&choose[]='+Ext.getCmp('checkbox'+i).getValue();
                                 }
-                                if (choose.length!=0) {window.location='php/download.php?date='+data.findField('date').getSubmitValue()+'&time='+data.findField('time').getSubmitValue()+'&view='+data.findField('view').getSubmitValue()+'&choose='+choose;}
+                                if (choose.length!=0) {window.location='php/download.php?date='+data.findField('date').getSubmitValue()+'&time='+data.findField('time').getSubmitValue()+'&view='+data.findField('view').getSubmitValue()+choose;}
                                 else Ext.Msg.alert('Failed','Phải chọn ít nhất một chất');
                               
                                   
@@ -306,6 +325,8 @@ Ext.onReady(function() {
                             waitMsg: 'Đang chuyển yêu cầu...',
                             success: function(form, action) {
                                 store.proxy.data=action.result.root;
+                                if (form.findField('view').getValue()=='5p') {store.proxy.setModel('Store.5MinData',true);}
+                                else store.proxy.setModel('Store.AddData',true);
                                 var sub=form.findField('subs').getValue();
                                 var radioid='radio'+sub;
                                 if (Ext.getCmp(radioid).getValue()) {showdata(sub);}

@@ -38,7 +38,18 @@ else $time=$_POST["time"];
 switch ($_POST["view"])
 {
     case "raw":
-        server("air_quality_data_raw");
+        $dataview="air_quality_data_raw";
+        if ($time==null) {$result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' ORDER BY date,time");}
+        else  $result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' AND date_trunc('hour',time)='$time' ORDER BY date,time");
+    $count=0;
+    while ($row = pg_fetch_array($result)) {
+        $data[$count][0]=$row[1];
+        $data[$count][1]=$row[2];
+        for ($i=2;$i<=10;$i++) {
+            $data[$count][$i]=round($row[$i+1],3);
+        }
+        $count++;
+    }
         break;
     case "5p":
         $dataview="air_quality_data_5min";
@@ -74,7 +85,16 @@ switch ($_POST["view"])
         break;
     case "m":
         $dataview="air_quality_data_month";
-        $result = pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' ORDER BY date,time");
+        $result = pg_query($db_conn, "SELECT * FROM $dataview WHERE (month=date_part('month',DATE '$date') AND year=date_part('year',DATE '$date')) ORDER BY month,year");
+        $count=0;
+    while ($row = pg_fetch_array($result)) {
+        $data[$count][0]=$row[1];
+        $data[$count][1]=$row[2];
+        for ($i=2;$i<=55;$i++) {
+            $data[$count][$i]=round($row[$i+1],3);
+        }
+        $count++;
+    }
         break;
 }
 

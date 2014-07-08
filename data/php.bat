@@ -1,1 +1,1 @@
-C:\wamp\bin\php\php5.4.16\php.exe -f "C:\wamp\www\GITSEP\data\test.php"
+C:\wamp\bin\php\php5.5.12\php.exe -f "C:\wamp\www\GITSEP\data\data.php"

@@ -86,7 +86,7 @@ options = {
             width: 2,
             zIndex: 4,
             label: {
-                text: 'Qui chuẩn Việt Nam: Không quy định',
+                text: 'Quy chuẩn Việt Nam: Không quy định',
                 align: 'left',
                 style: {
                     color: 'red'
@@ -177,7 +177,6 @@ options = {
                     },
 					mouseOver: function(){
 						if (Ext.getCmp('view').getValue()=='h') {
-                        var grid = Ext.getCmp('mygrid');
                         var store=Ext.getStore('store');
                         var rowid=getId(this.x);
 						var data=store.proxy.data[rowid];
@@ -308,10 +307,10 @@ options = {
         else qcvn=0;
 		if (qcvn==0) {
             options.yAxis.plotLines[0].value=0;
-            options.yAxis.plotLines[0].label.text='Qui chuẩn Việt Nam: Không qui định';
+            options.yAxis.plotLines[0].label.text='Quy chuẩn Việt Nam: Không quy định';
         } else {
 			options.yAxis.plotLines[0].value=qcvn;
-            options.yAxis.plotLines[0].label.text='Qui chuẩn Việt Nam: '+(Math.round(qcvn * 1000) / 1000)+' '+unit[subs-1];
+            options.yAxis.plotLines[0].label.text='Quy chuẩn Việt Nam: '+(Math.round(qcvn * 1000) / 1000)+' '+unit[subs-1];
 		}
         if (data.length!=0){
             if (Ext.getCmp('view').getValue()=='d') {
@@ -326,7 +325,7 @@ options = {
                     if (data[i][col]<0 || data[i][col]>500) options.series[1].data[i].color='red';
             };
             $('#chart-innerCt').highcharts(options); }
-            else  if (Ext.getCmp('view').getValue()=='5p') {
+            else  if (Ext.getCmp('view').getValue()=='5p' || Ext.getCmp('view').getValue()=='raw') {
                 for (var i=0;i<data.length;i++) {
             var jyea=data[i][0].substr(0,4);
             var jmon=data[i][0].substr(5,2)-1;
@@ -335,7 +334,7 @@ options = {
             var jmin=data[i][1].substr(3,2);
             var jsec=data[i][1].substr(6,2);
                     options.series[1].data.push({x:Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),y:data[i][subs+1]});
-            if (data[i][col]<0 || data[i][col]>500) options.series[1].data[i].color='red';
+            if (data[i][subs+1]<0 || data[i][subs+1]>500) options.series[1].data[i].color='red';
                 };
                  $('#chart-innerCt').highcharts(options);
             }

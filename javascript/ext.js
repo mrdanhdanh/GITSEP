@@ -21,7 +21,7 @@ Ext.onReady(function() {
                 {"send":3, "name":"NO"},
                 {"send":4, "name":"NO2"},
                 {"send":5, "name":"NOx"},
-                {"send":6, "name":"Ozone"},
+                {"send":6, "name":"O3"},
                 {"send":7, "name":"CO"},
                 {"send":8, "name":"SO2"},
                 {"send":9, "name":"PM2.5"}
@@ -113,6 +113,382 @@ Ext.onReady(function() {
             {name: 'max_pm25', type: 'float'}
         ]
     });
+    Ext.define('Store.DayData',{
+        extend: 'Ext.data.Model',
+        fields: [
+            {name: 'date', type: 'date', dateFormat: 'Y-m-d'},
+            {name: 'value_ch4', type: 'float'},
+            {name: 'min_ch4', type: 'float'},
+            {name: 'downquar_ch4', type: 'float'},
+            {name: 'median_ch4', type: 'float'},
+            {name: 'upquar_ch4', type: 'float'},
+            {name: 'max_ch4', type: 'float'},
+            {name: 'value_nm', type: 'float'},
+            {name: 'min_nm', type: 'float'},
+            {name: 'downquar_nm', type: 'float'},
+            {name: 'median_nm', type: 'float'},
+            {name: 'upquar_nm', type: 'float'},
+            {name: 'max_nm', type: 'float'},
+            {name: 'value_no', type: 'float'},
+            {name: 'min_no', type: 'float'},
+            {name: 'downquar_no', type: 'float'},
+            {name: 'median_no', type: 'float'},
+            {name: 'upquar_no', type: 'float'},
+            {name: 'max_no', type: 'float'},
+            {name: 'value_no2', type: 'float'},
+            {name: 'min_no2', type: 'float'},
+            {name: 'downquar_no2', type: 'float'},
+            {name: 'median_no2', type: 'float'},
+            {name: 'upquar_no2', type: 'float'},
+            {name: 'max_no2', type: 'float'},
+            {name: 'value_nox', type: 'float'},
+            {name: 'min_nox', type: 'float'},
+            {name: 'downquar_nox', type: 'float'},
+            {name: 'median_nox', type: 'float'},
+            {name: 'upquar_nox', type: 'float'},
+            {name: 'max_nox', type: 'float'},
+            {name: 'value_o3', type: 'float'},
+            {name: 'min_o3', type: 'float'},
+            {name: 'downquar_o3', type: 'float'},
+            {name: 'median_o3', type: 'float'},
+            {name: 'upquar_o3', type: 'float'},
+            {name: 'max_o3', type: 'float'},
+            {name: 'value_co', type: 'float'},
+            {name: 'min_co', type: 'float'},
+            {name: 'downquar_co', type: 'float'},
+            {name: 'median_co', type: 'float'},
+            {name: 'upquar_co', type: 'float'},
+            {name: 'max_co', type: 'float'},
+            {name: 'value_so2', type: 'float'},
+            {name: 'min_so2', type: 'float'},
+            {name: 'downquar_so2', type: 'float'},
+            {name: 'median_so2', type: 'float'},
+            {name: 'upquar_so2', type: 'float'},
+            {name: 'max_so2', type: 'float'},
+            {name: 'value_pm25', type: 'float'},
+            {name: 'min_pm25', type: 'float'},
+            {name: 'downquar_pm25', type: 'float'},
+            {name: 'median_pm25', type: 'float'},
+            {name: 'upquar_pm25', type: 'float'},
+            {name: 'max_pm25', type: 'float'}
+        ]
+    });
+    Ext.define('Store.MonData',{
+        extend: 'Ext.data.Model',
+        fields: [
+            {name: 'month', type: 'int'},
+            {name: 'year', type: 'int'},
+            {name: 'value_ch4', type: 'float'},
+            {name: 'min_ch4', type: 'float'},
+            {name: 'downquar_ch4', type: 'float'},
+            {name: 'median_ch4', type: 'float'},
+            {name: 'upquar_ch4', type: 'float'},
+            {name: 'max_ch4', type: 'float'},
+            {name: 'value_nm', type: 'float'},
+            {name: 'min_nm', type: 'float'},
+            {name: 'downquar_nm', type: 'float'},
+            {name: 'median_nm', type: 'float'},
+            {name: 'upquar_nm', type: 'float'},
+            {name: 'max_nm', type: 'float'},
+            {name: 'value_no', type: 'float'},
+            {name: 'min_no', type: 'float'},
+            {name: 'downquar_no', type: 'float'},
+            {name: 'median_no', type: 'float'},
+            {name: 'upquar_no', type: 'float'},
+            {name: 'max_no', type: 'float'},
+            {name: 'value_no2', type: 'float'},
+            {name: 'min_no2', type: 'float'},
+            {name: 'downquar_no2', type: 'float'},
+            {name: 'median_no2', type: 'float'},
+            {name: 'upquar_no2', type: 'float'},
+            {name: 'max_no2', type: 'float'},
+            {name: 'value_nox', type: 'float'},
+            {name: 'min_nox', type: 'float'},
+            {name: 'downquar_nox', type: 'float'},
+            {name: 'median_nox', type: 'float'},
+            {name: 'upquar_nox', type: 'float'},
+            {name: 'max_nox', type: 'float'},
+            {name: 'value_o3', type: 'float'},
+            {name: 'min_o3', type: 'float'},
+            {name: 'downquar_o3', type: 'float'},
+            {name: 'median_o3', type: 'float'},
+            {name: 'upquar_o3', type: 'float'},
+            {name: 'max_o3', type: 'float'},
+            {name: 'value_co', type: 'float'},
+            {name: 'min_co', type: 'float'},
+            {name: 'downquar_co', type: 'float'},
+            {name: 'median_co', type: 'float'},
+            {name: 'upquar_co', type: 'float'},
+            {name: 'max_co', type: 'float'},
+            {name: 'value_so2', type: 'float'},
+            {name: 'min_so2', type: 'float'},
+            {name: 'downquar_so2', type: 'float'},
+            {name: 'median_so2', type: 'float'},
+            {name: 'upquar_so2', type: 'float'},
+            {name: 'max_so2', type: 'float'},
+            {name: 'value_pm25', type: 'float'},
+            {name: 'min_pm25', type: 'float'},
+            {name: 'downquar_pm25', type: 'float'},
+            {name: 'median_pm25', type: 'float'},
+            {name: 'upquar_pm25', type: 'float'},
+            {name: 'max_pm25', type: 'float'}
+        ]
+    });
+    griddef = [
+                {
+                    text : 'Ngày',
+                    minWidth : 90,
+                    sortable : true,             
+                    renderer : Ext.util.Format.dateRenderer('d/m/Y'),
+                    dataIndex: 'date',
+                    editor: {
+                        xtype: 'datefield',
+                        format: 'd/m/Y',
+                        allowBlank: false
+                    }
+                },{
+                    text : 'Thời gian',
+                    minWidth : 90,
+                    sortable : true,
+                    renderer : Ext.util.Format.dateRenderer('H:i:s'),
+                    dataIndex: 'time',
+                    editor: {
+                        xtype: 'timefield',
+                        format: 'H:i:s',
+                        increment: 5,
+                        allowBlank: false
+                    }
+                },{
+                    text : 'CH4',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,                  
+                    dataIndex: 'value_ch4',
+                    editor: {
+                        xtype: 'numberfield',
+                        decimalPrecision: 4,
+                        allowBlank: false
+                    }
+                },{
+                    text : 'NMHC',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_nm',
+                    editor: {
+                        xtype: 'numberfield',
+                        decimalPrecision: 4,
+                        allowBlank: false
+                    }
+                },{
+                    text : 'NO',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_no',
+                    editor: {
+                        xtype: 'numberfield',
+                        decimalPrecision: 4,
+                        allowBlank: false
+                    }
+                },{
+                    text : 'NO2',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_no2',
+                    editor: {
+                        xtype: 'numberfield',
+                        decimalPrecision: 4,
+                        allowBlank: false
+                    }
+                },{
+                    text : 'NOx',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_nox',
+                    editor: {
+                        xtype: 'numberfield',
+                        decimalPrecision: 4,
+                        allowBlank: false
+                    }
+                },{
+                    text : 'Ozone',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_o3',
+                    editor: {
+                        xtype: 'numberfield',
+                        decimalPrecision: 4,
+                        allowBlank: false
+                            }
+                },{
+                    text : 'CO',
+                    width : '7%',
+                    minWidth :60,
+                    sortable : true,
+                    dataIndex: 'value_co',
+                    editor: {
+                        xtype: 'numberfield',
+                        decimalPrecision: 4,
+                        allowBlank: false
+                    }
+                },{
+                    text : 'SO2',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_so2',
+                    editor: {
+                        xtype: 'numberfield',
+                        decimalPrecision: 4,
+                        allowBlank: false
+                    }
+                },
+                {
+                    text : 'PM25',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_pm25',
+                    editor: {
+                        xtype: 'numberfield',
+                        decimalPrecision: 4,
+                        allowBlank: false
+                    }
+                }];
+    gridmonth = [
+                {
+                    text : 'Tháng',
+                    minWidth : 30,
+                    sortable : true,             
+                    dataIndex: 'month'
+                },{
+                    text : 'Năm',
+                    minWidth : 60,
+                    sortable : true,             
+                    dataIndex: 'year'
+                },{
+                    text : 'CH4',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,                  
+                    dataIndex: 'value_ch4'
+                },{
+                    text : 'NMHC',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_nm'
+                },{
+                    text : 'NO',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_no'
+                },{
+                    text : 'NO2',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_no2'
+                },{
+                    text : 'NOx',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_nox'
+                },{
+                    text : 'Ozone',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_o3'
+                },{
+                    text : 'CO',
+                    width : '7%',
+                    minWidth :60,
+                    sortable : true,
+                    dataIndex: 'value_co'
+                },{
+                    text : 'SO2',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_so2'
+                },
+                {
+                    text : 'PM25',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_pm25'
+                }];
+    gridday = [
+                {
+                    text : 'Ngày',
+                    minWidth : 90,
+                    sortable : true,             
+                    renderer : Ext.util.Format.dateRenderer('d/m/Y'),
+                    dataIndex: 'date'
+                },{
+                    text : 'CH4',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,                  
+                    dataIndex: 'value_ch4'
+                },{
+                    text : 'NMHC',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_nm'
+                },{
+                    text : 'NO',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_no'
+                },{
+                    text : 'NO2',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_no2'
+                },{
+                    text : 'NOx',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_nox'
+                },{
+                    text : 'Ozone',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_o3'
+                },{
+                    text : 'CO',
+                    width : '7%',
+                    minWidth :60,
+                    sortable : true,
+                    dataIndex: 'value_co'
+                },{
+                    text : 'SO2',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_so2'
+                },
+                {
+                    text : 'PM25',
+                    minWidth :60,
+                    width : '7%',
+                    sortable : true,
+                    dataIndex: 'value_pm25'
+                }];
     store = Ext.create('Ext.data.ArrayStore', {
         storeId: 'store',
         model: 'Store.AddData',
@@ -325,8 +701,13 @@ Ext.onReady(function() {
                             waitMsg: 'Đang chuyển yêu cầu...',
                             success: function(form, action) {
                                 store.proxy.data=action.result.root;
-                                if (form.findField('view').getValue()=='5p') {store.proxy.setModel('Store.5MinData',true);}
+                                if (form.findField('view').getValue()=='5p' || form.findField('view').getValue()=='raw') {store.proxy.setModel('Store.5MinData',true);}
+                                else if (form.findField('view').getValue()=='d') {store.proxy.setModel('Store.DayData',true);}
+                                else if (form.findField('view').getValue()=='m') {store.proxy.setModel('Store.MonData',true);}
                                 else store.proxy.setModel('Store.AddData',true);
+                                if (form.findField('view').getValue()=='d') {Ext.getCmp('mygrid').reconfigure(store,gridday);}
+                                else if (form.findField('view').getValue()=='m') {Ext.getCmp('mygrid').reconfigure(store,gridmonth);}
+                                else Ext.getCmp('mygrid').reconfigure(store,griddef);
                                 var sub=form.findField('subs').getValue();
                                 var radioid='radio'+sub;
                                 if (Ext.getCmp(radioid).getValue()) {showdata(sub);}
@@ -365,131 +746,7 @@ Ext.onReady(function() {
                     tool.getComponent('delete').enable();
                 }                    
             },
-            columns: [
-                {
-                    text : 'Ngày',
-                    minWidth : 90,
-                    sortable : true,             
-                    renderer : Ext.util.Format.dateRenderer('d/m/Y'),
-                    dataIndex: 'date',
-                    editor: {
-                        xtype: 'datefield',
-                        format: 'd/m/Y',
-                        allowBlank: false
-                    }
-                },{
-                    text : 'Thời gian',
-                    minWidth : 90,
-                    sortable : true,
-                    renderer : Ext.util.Format.dateRenderer('H:i:s'),
-                    dataIndex: 'time',
-                    editor: {
-                        xtype: 'timefield',
-                        format: 'H:i:s',
-                        increment: 5,
-                        allowBlank: false
-                    }
-                },{
-                    text : 'CH4',
-                    minWidth :60,
-                    width : '7%',
-                    sortable : true,                  
-                    dataIndex: 'value_ch4',
-                    editor: {
-                        xtype: 'numberfield',
-                        decimalPrecision: 4,
-                        allowBlank: false
-                    }
-                },{
-                    text : 'NMHC',
-                    minWidth :60,
-                    width : '7%',
-                    sortable : true,
-                    dataIndex: 'value_nm',
-                    editor: {
-                        xtype: 'numberfield',
-                        decimalPrecision: 4,
-                        allowBlank: false
-                    }
-                },{
-                    text : 'NO',
-                    minWidth :60,
-                    width : '7%',
-                    sortable : true,
-                    dataIndex: 'value_no',
-                    editor: {
-                        xtype: 'numberfield',
-                        decimalPrecision: 4,
-                        allowBlank: false
-                    }
-                },{
-                    text : 'NO2',
-                    minWidth :60,
-                    width : '7%',
-                    sortable : true,
-                    dataIndex: 'value_no2',
-                    editor: {
-                        xtype: 'numberfield',
-                        decimalPrecision: 4,
-                        allowBlank: false
-                    }
-                },{
-                    text : 'NOx',
-                    minWidth :60,
-                    width : '7%',
-                    sortable : true,
-                    dataIndex: 'value_nox',
-                    editor: {
-                        xtype: 'numberfield',
-                        decimalPrecision: 4,
-                        allowBlank: false
-                    }
-                },{
-                    text : 'Ozone',
-                    minWidth :60,
-                    width : '7%',
-                    sortable : true,
-                    dataIndex: 'value_o3',
-                    editor: {
-                        xtype: 'numberfield',
-                        decimalPrecision: 4,
-                        allowBlank: false
-                            }
-                },{
-                    text : 'CO',
-                    width : '7%',
-                    minWidth :60,
-                    sortable : true,
-                    dataIndex: 'value_co',
-                    editor: {
-                        xtype: 'numberfield',
-                        decimalPrecision: 4,
-                        allowBlank: false
-                    }
-                },{
-                    text : 'SO2',
-                    minWidth :60,
-                    width : '7%',
-                    sortable : true,
-                    dataIndex: 'value_so2',
-                    editor: {
-                        xtype: 'numberfield',
-                        decimalPrecision: 4,
-                        allowBlank: false
-                    }
-                },
-                {
-                    text : 'PM25',
-                    minWidth :60,
-                    width : '7%',
-                    sortable : true,
-                    dataIndex: 'value_pm25',
-                    editor: {
-                        xtype: 'numberfield',
-                        decimalPrecision: 4,
-                        allowBlank: false
-                    }
-                }],
+            columns: griddef,
             tbar: {
                 id: 'toolbar',
                 items: [{
@@ -579,13 +836,21 @@ Ext.onReady(function() {
             selType: 'rowmodel',
             plugins: [
                 Ext.create('Ext.grid.plugin.RowEditing', {
-                    autoCancel: false,
+                    autoCancel: true,
                     clicksToEdit: 2,
                     pluginId: "rowedit",
                     listeners: {
+                        beforeedit: {
+                            fn: function(editor,e){
+                                if (Ext.getCmp('form').getForm().findField('view').getValue()!='5p') {
+                                    e.cancel=true;
+                                }
+                            }
+                        },
                         edit: { // Edit dự liệu trong grid
                             fn: function(editor,e){
                                 //var date=store.data.items[e.rowIdx].data.date;
+                                if (Ext.getCmp('form').getForm().findField('view').getValue()=='5p') {
                                 if (addcheck) {
                                     var proxy=[];
                                     var field=store.getProxy().getModel().getFields();
@@ -621,8 +886,9 @@ Ext.onReady(function() {
                                             }
                                             showdata(Ext.getCmp('form').getForm().findField('subs').getValue());
                                             break;    
-                                    }    
-                                }  
+                                    }
+                                }
+                                }
                         //alert(e.newValues);
                         //alert(store.getPageFromRecordIndex(19));
                         //e.record.commit();                      

@@ -1,21 +1,4 @@
 <?php
-function server($dataview){
-    global $db_conn, $date;
-    global $result;
-    global $time;
-    global $data;
-    if ($time==null) {$result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' ORDER BY date,time");}
-    else  $result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' AND date_trunc('hour',time)='$time' ORDER BY date,time");
-    $count=0;
-    while ($row = pg_fetch_array($result)) {
-        $data[$count][0]=$row[1];
-        $data[$count][1]=$row[2];
-        for ($i=2;$i<=55;$i++) {
-            $data[$count][$i]=round($row[$i+1],3);
-        }
-        $count++;
-    }
-}
 $database="host=localhost port=5432 dbname=postgres user=postgres password=root";
 // Create connection
 $db_conn=pg_connect("$database");
@@ -66,10 +49,31 @@ switch ($_POST["view"])
     }
         break;
     case "15p":
-        server("air_quality_data_15min");
+        $dataview="air_quality_data_15min";
+        if ($time==null) {$result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' ORDER BY date,time");}
+    else  $result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' AND date_trunc('hour',time)='$time' ORDER BY date,time");
+    $count=0;
+    while ($row = pg_fetch_array($result)) {
+        $data[$count][0]=$row[1];
+        $data[$count][1]=$row[2];
+        for ($i=2;$i<=55;$i++) {
+            $data[$count][$i]=round($row[$i+1],3);
+        }
+        $count++;
+    }
         break;    
     case "h":
-        server("air_quality_data_60min");
+        $dataview="air_quality_data_60min";
+        $result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' ORDER BY date,time");
+    $count=0;
+    while ($row = pg_fetch_array($result)) {
+        $data[$count][0]=$row[1];
+        $data[$count][1]=$row[2];
+        for ($i=2;$i<=55;$i++) {
+            $data[$count][$i]=round($row[$i+1],3);
+        }
+        $count++;
+    }
         break;
     case "d":
         $dataview="air_quality_data_day";

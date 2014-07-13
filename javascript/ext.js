@@ -26,17 +26,10 @@ Ext.onReady(function() {
                 {"send":8, "name":"SO2"},
                 {"send":9, "name":"PM2.5"}
             ]
-        }),
-        unit = Ext.create('Ext.data.Store', {
-            fields: ['send', 'name'],
-            data : [
-                {"send":"md", "name":"Mật độ"},
-                {"send":"si", "name":"SI"}
-            ]
         });
     // Tạo khung data grid
     itemsPerPage=20;
-    Ext.define('Store.5MinData',{
+    Ext.define('Store.FMinData',{
         extend: 'Ext.data.Model',
         fields: [
             {name: 'date', type: 'date', dateFormat: 'Y-m-d'},
@@ -237,7 +230,8 @@ Ext.onReady(function() {
     griddef = [
                 {
                     text : 'Ngày',
-                    minWidth : 90,
+                    minWidth : 110,
+                    width: 110,
                     sortable : true,             
                     renderer : Ext.util.Format.dateRenderer('d/m/Y'),
                     dataIndex: 'date',
@@ -259,9 +253,9 @@ Ext.onReady(function() {
                         allowBlank: false
                     }
                 },{
-                    text : 'CH4',
+                    text : 'CH'+'4'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,                  
                     dataIndex: 'value_ch4',
                     editor: {
@@ -272,7 +266,7 @@ Ext.onReady(function() {
                 },{
                     text : 'NMHC',
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_nm',
                     editor: {
@@ -283,7 +277,7 @@ Ext.onReady(function() {
                 },{
                     text : 'NO',
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_no',
                     editor: {
@@ -292,9 +286,9 @@ Ext.onReady(function() {
                         allowBlank: false
                     }
                 },{
-                    text : 'NO2',
+                    text : 'NO'+'2'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_no2',
                     editor: {
@@ -303,9 +297,9 @@ Ext.onReady(function() {
                         allowBlank: false
                     }
                 },{
-                    text : 'NOx',
+                    text : 'NO'+'x'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_nox',
                     editor: {
@@ -314,9 +308,9 @@ Ext.onReady(function() {
                         allowBlank: false
                     }
                 },{
-                    text : 'Ozone',
+                    text : 'O'+'3'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_o3',
                     editor: {
@@ -326,8 +320,8 @@ Ext.onReady(function() {
                             }
                 },{
                     text : 'CO',
-                    width : '7%',
                     minWidth :60,
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_co',
                     editor: {
@@ -336,9 +330,9 @@ Ext.onReady(function() {
                         allowBlank: false
                     }
                 },{
-                    text : 'SO2',
+                    text : 'SO'+'2'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_so2',
                     editor: {
@@ -348,9 +342,9 @@ Ext.onReady(function() {
                     }
                 },
                 {
-                    text : 'PM25',
+                    text : 'PM'+'2.5'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_pm25',
                     editor: {
@@ -363,23 +357,25 @@ Ext.onReady(function() {
                 {
                     text : 'Tháng',
                     minWidth : 30,
+                    width: 60,
                     sortable : true,             
                     dataIndex: 'month'
                 },{
                     text : 'Năm',
                     minWidth : 60,
+                    width: 60,
                     sortable : true,             
                     dataIndex: 'year'
                 },{
-                    text : 'CH4',
+                    text : 'CH'+'4'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,                  
                     dataIndex: 'value_ch4'
                 },{
                     text : 'NMHC',
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_nm'
                 },{
@@ -389,103 +385,104 @@ Ext.onReady(function() {
                     sortable : true,
                     dataIndex: 'value_no'
                 },{
-                    text : 'NO2',
+                    text : 'NO'+'2'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_no2'
                 },{
-                    text : 'NOx',
+                    text : 'NO'+'x'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_nox'
                 },{
-                    text : 'Ozone',
+                    text : 'O'+'3'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_o3'
                 },{
                     text : 'CO',
-                    width : '7%',
                     minWidth :60,
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_co'
                 },{
-                    text : 'SO2',
+                    text : 'SO'+'2'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_so2'
                 },
                 {
-                    text : 'PM25',
+                    text : 'PM'+'2.5'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_pm25'
                 }];
     gridday = [
                 {
                     text : 'Ngày',
-                    minWidth : 90,
+                    minWidth : 110,
+                    maxWidth : 110,
                     sortable : true,             
                     renderer : Ext.util.Format.dateRenderer('d/m/Y'),
                     dataIndex: 'date'
                 },{
-                    text : 'CH4',
+                    text : 'CH'+'4'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,                  
                     dataIndex: 'value_ch4'
                 },{
                     text : 'NMHC',
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_nm'
                 },{
                     text : 'NO',
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_no'
                 },{
-                    text : 'NO2',
+                    text : 'NO'+'2'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_no2'
                 },{
-                    text : 'NOx',
+                    text : 'NO'+'x'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_nox'
                 },{
-                    text : 'Ozone',
+                    text : 'O'+'3'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_o3'
                 },{
                     text : 'CO',
-                    width : '7%',
                     minWidth :60,
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_co'
                 },{
-                    text : 'SO2',
+                    text : 'SO'+'2'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_so2'
                 },
                 {
-                    text : 'PM25',
+                    text : 'PM'+'2.5'.sub(),
                     minWidth :60,
-                    width : '7%',
+                    width: 75,
                     sortable : true,
                     dataIndex: 'value_pm25'
                 }];
@@ -525,12 +522,12 @@ Ext.onReady(function() {
         }, {
             region: 'west', //Phía bên trái, form
             collapsible: true,
-            collapsed: false,
+            collapsed: true,
             split: true,
             autoScroll: true,
             title: 'Options',
-            minWidth: 220,
-            maxWidth: 250,
+            minWidth: 230,
+            maxWidth: 230,
             xtype: 'form',
             bodyPadding: 0,
             id: 'form',
@@ -597,15 +594,6 @@ Ext.onReady(function() {
                 displayField: 'name',
                 value: 1,
                 valueField: 'send'
-            },{
-                xtype: 'combo',
-                fieldLabel: 'Unit',
-                name: 'unit',
-                store: unit,
-                queryMode: 'local',
-                displayField: 'name',
-                value: 'md',
-                valueField: 'send'
             }]
     },{
         title: 'Download options',
@@ -615,7 +603,7 @@ Ext.onReady(function() {
             defaultType: 'checkboxfield',
             items: [
                 {
-                    boxLabel  : 'CH4',
+                    boxLabel  : 'CH'+'4'.sub(),
                     inputValue: 1,
                     checked   : true,
                     id        : 'checkbox1'
@@ -630,17 +618,17 @@ Ext.onReady(function() {
                     checked   : true,
                     id        : 'checkbox3'
                 }, {
-                    boxLabel  : 'NO2',
+                    boxLabel  : 'NO'+'2'.sub(),
                     inputValue: 4,
                     checked   : true,
                     id        : 'checkbox4'
                 }, {
-                    boxLabel  : 'NOx',
+                    boxLabel  : 'NO'+'x'.sub(),
                     inputValue: 5,
                     checked   : true,
                     id        : 'checkbox5'
                 }, {
-                    boxLabel  : 'O3',
+                    boxLabel  : 'O'+'3'.sub(),
                     inputValue: 6,
                     checked   : true,
                     id        : 'checkbox6'
@@ -650,12 +638,12 @@ Ext.onReady(function() {
                     checked   : true,
                     id        : 'checkbox7'
                 }, {
-                    boxLabel  : 'SO2',
+                    boxLabel  : 'SO'+'2'.sub(),
                     inputValue: 8,
                     checked   : true,
                     id        : 'checkbox8'
                 }, {
-                    boxLabel  : 'PM2.5',
+                    boxLabel  : 'PM'+'2.5'.sub(),
                     inputValue: 9,
                     checked   : true,
                     id        : 'checkbox9'
@@ -701,7 +689,7 @@ Ext.onReady(function() {
                             waitMsg: 'Đang chuyển yêu cầu...',
                             success: function(form, action) {
                                 store.proxy.data=action.result.root;
-                                if (form.findField('view').getValue()=='5p' || form.findField('view').getValue()=='raw') {store.proxy.setModel('Store.5MinData',true);}
+                                if (form.findField('view').getValue()=='5p' || form.findField('view').getValue()=='raw'){store.proxy.setModel('Store.FMinData',true);}
                                 else if (form.findField('view').getValue()=='d') {store.proxy.setModel('Store.DayData',true);}
                                 else if (form.findField('view').getValue()=='m') {store.proxy.setModel('Store.MonData',true);}
                                 else store.proxy.setModel('Store.AddData',true);
@@ -754,16 +742,17 @@ Ext.onReady(function() {
                     text: 'Add',
                     scope: this,
                     handler: function(){
+                        if (Ext.getCmp('form').getForm().findField('view').getValue()=='5p') {
                         var d=new Date();
-                        var rec = new Store.AddData({
+                        var rec = new Store.FMinData({
                             date: d,
                             time: d,
-                            Metan: '0',
+                            CH4: '0',
                             NMHC: '0',
                             NO: '0',
                             NO2: '0',
                             NOx: '0',
-                            Ozone: '0',
+                            O3: '0',
                             SO2: '0',
                             CO: '0',
                             PM25: '0'
@@ -771,6 +760,7 @@ Ext.onReady(function() {
                         store.insert(0, rec);
                         addcheck=true;
                         edit.startEdit(0,2);
+                        } else Ext.Msg.alert('Failed', 'Chỉ có thể chỉnh sửa dữ liệu 5 phút');
                     }
                 },{
                     iconCls: 'icon-delete',
@@ -779,13 +769,15 @@ Ext.onReady(function() {
                     itemId: 'delete',
                     scope: this,
                     handler: function (){
+                        if (Ext.getCmp('form').getForm().findField('view').getValue()=='5p') {
                         var selection=Ext.getCmp('mygrid').getView().getSelectionModel().getSelection()[0];
                         store.remove(selection);
                         udarray.push(['delete',store.proxy.data[selection.index]]);
                         store.proxy.data.splice(selection.index,1);
                         Ext.getCmp('paging').doRefresh();
                         showdata(Ext.getCmp('form').getForm().findField('subs').getValue());
-                        var tool=Ext.getCmp('toolbar');
+                            } else Ext.Msg.alert('Failed', 'Chỉ có thể chỉnh sửa dữ liệu 5 phút');
+                        var tool=Ext.getCmp('toolbar');   
                         tool.getComponent('delete').disable();                    
                     }
                 }]
@@ -844,13 +836,25 @@ Ext.onReady(function() {
                             fn: function(editor,e){
                                 if (Ext.getCmp('form').getForm().findField('view').getValue()!='5p') {
                                     e.cancel=true;
+                                } else if (Ext.getCmp('mygrid').getPlugin('rowedit').editor!=null) {
+                                    for (i=0;i<=10;i++)
+                                {
+                                    Ext.getCmp('mygrid').getPlugin('rowedit').editor.items.items[i].width=Ext.getCmp('mygrid').columnManager.columns[i].width-5;
+                                }
+                                }
+                            }
+                        },
+                        canceledit: {
+                            fn: function(editor,e){
+                                if (addcheck) {
+                                    store.removeAt(0);
+                                    addcheck=false;
                                 }
                             }
                         },
                         edit: { // Edit dự liệu trong grid
                             fn: function(editor,e){
                                 //var date=store.data.items[e.rowIdx].data.date;
-                                if (Ext.getCmp('form').getForm().findField('view').getValue()=='5p') {
                                 if (addcheck) {
                                     var proxy=[];
                                     var field=store.getProxy().getModel().getFields();
@@ -887,11 +891,7 @@ Ext.onReady(function() {
                                             showdata(Ext.getCmp('form').getForm().findField('subs').getValue());
                                             break;    
                                     }
-                                }
-                                }
-                        //alert(e.newValues);
-                        //alert(store.getPageFromRecordIndex(19));
-                        //e.record.commit();                      
+                                }                      
                             }
                         }
                     }       

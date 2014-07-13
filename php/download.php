@@ -24,28 +24,6 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version    1.8.0, 2014-03-02
  */
-function server($dataview){
-    global $db_conn, $date;
-    global $result;
-    global $time;
-    global $data;
-    global $choose;
-    if ($time=='null') {$result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' ORDER BY date,time");}
-    else  $result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' AND date_trunc('hour',time)='$time' ORDER BY date,time");
-    $count=0;
-    while ($row = pg_fetch_array($result)) {
-        $data[$count][0]=$row[1];
-        $data[$count][1]=$row[2];
-        $y=2;
-            for ($i=1;$i<=9;$i++) {
-                if ($choose[$i-1]=='true') {
-                    $data[$count][$y]=round($row[($i-1)*6+3],3);
-                    $y++;
-                }
-            }
-        $count++;
-    }
-}
 $database="host=localhost port=5432 dbname=postgres user=postgres password=root";
 // Create connection
 $db_conn=pg_connect("$database");
@@ -68,16 +46,71 @@ $choose=$_GET["choose"];
 switch ($_GET["view"])
 {
     case "raw":
-        server("air_quality_data_raw");
+        $dataview="air_quality_data_raw";
+        if ($time=="null") {$result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' ORDER BY date,time");}
+        else  $result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' AND date_trunc('hour',time)='$time' ORDER BY date,time");
+    $count=0;
+    while ($row = pg_fetch_array($result)) {
+        $data[$count][0]=$row[1];
+        $data[$count][1]=$row[2];
+            for ($i=2;$i<=10;$i++) {
+                if ($choose[$i-2]=='true') {
+                    $data[$count][$i]=round($row[$i+1],3);
+                }
+            }
+        $count++;
+    }
         break;
     case "5p":
-        server("air_quality_data_5min");
+        $dataview="air_quality_data_5min";
+        if ($time=="null") {$result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' ORDER BY date,time");}
+        else  $result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' AND date_trunc('hour',time)='$time' ORDER BY date,time");
+    $count=0;
+    while ($row = pg_fetch_array($result)) {
+        $data[$count][0]=$row[1];
+        $data[$count][1]=$row[2];
+            for ($i=2;$i<=10;$i++) {
+                if ($choose[$i-2]=='true') {
+                    $data[$count][$i]=round($row[$i+1],3);
+                }
+            }
+        $count++;
+    }
         break;
     case "15p":
-        server("air_quality_data_15min");
+        $dataview="air_quality_data_15min";
+        if ($time=="null") {$result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' ORDER BY date,time");}
+    else  $result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' AND date_trunc('hour',time)='$time' ORDER BY date,time");
+    $count=0;
+    while ($row = pg_fetch_array($result)) {
+        $data[$count][0]=$row[1];
+        $data[$count][1]=$row[2];
+        $y=2;
+            for ($i=1;$i<=9;$i++) {
+                if ($choose[$i-1]=='true') {
+                    $data[$count][$y]=round($row[($i-1)*6+3],3);
+                    $y++;
+                }
+            }
+        $count++;
+    }
         break;    
     case "h":
-        server("air_quality_data_60min");
+        $dataview="air_quality_data_60min";
+        $result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' ORDER BY date,time");
+    $count=0;
+    while ($row = pg_fetch_array($result)) {
+        $data[$count][0]=$row[1];
+        $data[$count][1]=$row[2];
+        $y=2;
+            for ($i=1;$i<=9;$i++) {
+                if ($choose[$i-1]=='true') {
+                    $data[$count][$y]=round($row[($i-1)*6+3],3);
+                    $y++;
+                }
+            }
+        $count++;
+    }
         break;
     case "d":
         $dataview="air_quality_data_day";
@@ -87,25 +120,31 @@ switch ($_GET["view"])
             $data[$count][0]=$row[1];
             $y=1;
             for ($i=1;$i<=9;$i++) {
-                if ($choose[$i-1]='true') {
-                    $data[$count][$y]=round($row[$i+1],4);
+                if ($choose[$i-1]=='true') {
+                    $data[$count][$y]=round($row[($i-1)*6+2],3);
                     $y++;
                 }
             }
             $count++;
         }
         break;
-    case "w":
-        $dataview="air_quality_data_week";
-        $time=substr($time,0,7);
-        $timeview="YYYY-MM";
-        break;
     case "m":
         $dataview="air_quality_data_month";
-        $result = pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' ORDER BY date,time");
+        $result = pg_query($db_conn, "SELECT * FROM $dataview WHERE (month=date_part('month',DATE '$date') AND year=date_part('year',DATE '$date')) ORDER BY month,year");
+        $count=0;
+    while ($row = pg_fetch_array($result)) {
+        $data[$count][0]=$row[1];
+        $data[$count][1]=$row[2];
+        $y=2;
+            for ($i=1;$i<=9;$i++) {
+                if ($choose[$i-1]=='true') {
+                    $data[$count][$y]=round($row[($i-1)*6+3],3);
+                    $y++;
+                }
+            }
+        $count++;
+    }
         break;
-    dafault:
-        $dataview="data_raw";
 }
 pg_close($db_conn);
 
@@ -135,20 +174,14 @@ $objPHPExcel->getProperties()->setCreator("SEP")
 							 ->setCategory("");
 
 // Add data
-$headraw=array('Date','Time','CH4 (ppm)','NM2 (ppm)','NO (ppb)','NO2 (ppb)','NOx (ppb)','O3 (ppb)','CO (ppm)','SO2 (ppb)','PM25 (ug/Nm3)');
-$head=array('Date','Time');
+$headraw=array('CH4 (ppm)','NMHC (ppm)','NO (ppb)','NO2 (ppb)','NOx (ppb)','O3 (ppb)','CO (ppm)','SO2 (ppb)','PM25 (ug/Nm3)');
+if ($_GET["view"]=="d") {$head=array('Date');}
+else if ($_GET["view"]=="m") {$head=array('Month','Year');}
+else $head=array('Date','Time');
 for ($i=0;$i<=8;$i++) {
-    if ($choose[$i]=='true') {array_push($head,$headraw[$i+2]);}
+    if ($choose[$i]=='true') {array_push($head,$headraw[$i]);}
 }
-$objPHPExcel->getActiveSheet()->getStyle('C1:Z1')->getFill()->applyFromArray(
-    array(
-        'type'     => PHPExcel_Style_Fill::FILL_SOLID,
-        'rotation'   => 0,
-        'startcolor' => array(
-            'rgb' => '00B0F0'
-        )
-    )
-	);
+
 $objPHPExcel->getActiveSheet()->getStyle('A')->getFill()->applyFromArray(
     array(
         'type'     => PHPExcel_Style_Fill::FILL_SOLID,
@@ -158,6 +191,9 @@ $objPHPExcel->getActiveSheet()->getStyle('A')->getFill()->applyFromArray(
         )
     )
 );
+$objPHPExcel->getActiveSheet()->getStyle('A')->getFont()->getColor()->setRGB('FFFFFF');
+
+if ($_GET["view"]<>"d") {
 $objPHPExcel->getActiveSheet()->getStyle('B')->getFill()->applyFromArray(
     array(
         'type'     => PHPExcel_Style_Fill::FILL_SOLID,
@@ -167,9 +203,29 @@ $objPHPExcel->getActiveSheet()->getStyle('B')->getFill()->applyFromArray(
         )
     )
 );
-$objPHPExcel->getActiveSheet()->getStyle('A')->getFont()->getColor()->setRGB('FFFFFF');
+    $objPHPExcel->getActiveSheet()->getStyle('C1:Z1')->getFill()->applyFromArray(
+    array(
+        'type'     => PHPExcel_Style_Fill::FILL_SOLID,
+        'rotation'   => 0,
+        'startcolor' => array(
+            'rgb' => '00B0F0'
+        )
+    )
+	);
 $objPHPExcel->getActiveSheet()->getStyle('B')->getFont()->getColor()->setRGB('FFFFFF');
 $objPHPExcel->getActiveSheet()->getStyle('C1:Z1')->getFont()->getColor()->setRGB('FFFFFF');
+} else {
+    $objPHPExcel->getActiveSheet()->getStyle('B1:Z1')->getFill()->applyFromArray(
+    array(
+        'type'     => PHPExcel_Style_Fill::FILL_SOLID,
+        'rotation'   => 0,
+        'startcolor' => array(
+            'rgb' => '00B0F0'
+        )
+    )
+	);
+$objPHPExcel->getActiveSheet()->getStyle('B1:Z1')->getFont()->getColor()->setRGB('FFFFFF');
+}
 
 $objPHPExcel->setActiveSheetIndex(0)
             ->fromArray($head,NULL, 'A1')

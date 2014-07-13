@@ -62,21 +62,15 @@ options = {
     xAxis: {
         type: 'datetime',
         dateTimeLabelFormats: {
-	millisecond: '%H:%M:%S.%L',
-	second: '%H:%M:%S',
-	minute: '%H:%M',
-	hour: '%H:%M',
-	day: '%e. %b',
-	week: '%e. %b',
-	month: '%b \'%y',
-	year: '%Y'
+	month: '%e. %b',
+	year: '%b'
 },
         title: {
             text: 'Thời gian'
         }
     },
     yAxis: {
-		min: 0,
+		
         title: {
             text: 'Nồng độ'
         },
@@ -134,11 +128,12 @@ options = {
             events:{
                 mouseOut: function(){
                     if (Ext.getCmp('view').getValue()=='h') {
+                        if (iselect==false && isse==false) {
                         rect.destroy();
                             text.destroy();
                         if (maxaqi24h<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)';textcolor='#000000';}
                         else if (maxaqi24h<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';textcolor='#000000';}
-                        else if (maxaqi24h<=200) {fillcolor='rgb(255, 167, 0)';strokecolor='rgba(255, 167, 0, 0.75)';textcolor='#000000';}
+                        else if (maxaqi24h<=200) {fillcolor='rgb(255, 191, 65)';strokecolor='rgba(255, 191, 65, 0.75)';textcolor='#000000';}
                         else if (maxaqi24h<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';textcolor='#ffffff';}
                         else {fillcolor='rgb(162, 92, 3)';strokecolor='rgb(162, 92, 3, 0.75)';textcolor='#ffffff';}
         var chart=$('#chart-innerCt').highcharts();
@@ -161,8 +156,45 @@ options = {
                 'stroke-width': 1,
                 zIndex: 4
             })
+            .add();}
+                else {
+                    isse=true;
+                    iselect=false;
+                    var store=Ext.getStore('store');
+						var data=store.proxy.data[selectid];
+						if (maxaqi1h[selectid]<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)';textcolor='#000000';}
+                        else if (maxaqi1h[selectid]<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';textcolor='#000000';}
+                        else if (maxaqi1h[selectid]<=200) {fillcolor='rgb(255, 191, 65)';strokecolor='rgba(255, 191, 65, 0.75)';textcolor='#000000';}
+                        else if (maxaqi1h[selectid]<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';textcolor='#ffffff';}
+                        else {fillcolor='rgb(162, 92, 3)';strokecolor='rgb(162, 92, 3, 0.75)';textcolor='#ffffff';}
+                            rect.destroy();
+                            text.destroy();
+						var chart=$('#chart-innerCt').highcharts();
+                        var time=parseInt(data[1].substr(0,2));
+        text = chart.renderer.text(
+                'AQI ('+time+'h - '+(time+1)+'h) = '+Math.round(maxaqi1h[selectid])+' ('+subname1h[selectid]+')', 
+                chart.plotLeft + 50, 
+                chart.plotTop + 30
+            ).attr({
+                zIndex: 5
+            }).css({
+                color: textcolor,
+                fontSize: '16px'
+            }).on('click',function(){aqitable()})
+        .add();
+        
+        var box = text.getBBox();
+        rect=chart.renderer.rect(box.x - 5, box.y - 5, box.width + 10, box.height + 10, 0)
+            .attr({
+                fill: fillcolor,
+                stroke: strokecolor,
+                'stroke-width': 1,
+                zIndex: 4
+            })
             .add();
-                    }}
+                };
+                    }
+                }
             },
             point: {
                 events: {
@@ -174,38 +206,31 @@ options = {
                         var row=rowid-((page-1)*itemsPerPage);
                         store.loadPage(page);
                         grid.getView().focusRow(row);
+                        
+                    },
+                    select: function(){
+                        iselect=true;
+                        selectid=getId(this.x);
+                    },
+                    unselect: function(){
+                        isse=false;
                     },
 					mouseOver: function(){
 						if (Ext.getCmp('view').getValue()=='h') {
                         var store=Ext.getStore('store');
                         var rowid=getId(this.x);
 						var data=store.proxy.data[rowid];
-						var maxaqi1h=0;
-                        var subname=null;
-						for (var i=0;i<=4;i++) {
-							var sub=haveqcvn[i];
-							if (arrayqcvn[sub]['klr']==0) {stand=arrayqcvn[sub]['avg_1h'];}
-								else if (unit[sub-1]=='ppm') {
-									stand=arrayqcvn[sub]['avg_1h']/arrayqcvn[sub]['klr']*24.45/1000;
-									} else stand=arrayqcvn[sub]['avg_1h']/arrayqcvn[sub]['klr']*24.45;
-							if (i==4) stand=300;
-                            if (maxaqi1h!=Math.max(data[(sub-1)*6+ex]/stand*100,maxaqi1h)) {
-                                maxaqi1h=Math.max(data[(sub-1)*6+ex]/stand*100,maxaqi1h);
-                                subname=arrayqcvn[sub]['name'];
-                            }
-							
-						}
-						if (maxaqi1h<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)';textcolor='#000000';}
-                        else if (maxaqi1h<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';textcolor='#000000';}
-                        else if (maxaqi1h<=200) {fillcolor='rgb(255, 167, 0)';strokecolor='rgba(255, 167, 0, 0.75)';textcolor='#000000';}
-                        else if (maxaqi1h<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';textcolor='#ffffff';}
+						if (maxaqi1h[rowid]<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)';textcolor='#000000';}
+                        else if (maxaqi1h[rowid]<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';textcolor='#000000';}
+                        else if (maxaqi1h[rowid]<=200) {fillcolor='rgb(255, 191, 65)';strokecolor='rgba(255, 191, 65, 0.75)';textcolor='#000000';}
+                        else if (maxaqi1h[rowid]<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';textcolor='#ffffff';}
                         else {fillcolor='rgb(162, 92, 3)';strokecolor='rgb(162, 92, 3, 0.75)';textcolor='#ffffff';}
                             rect.destroy();
                             text.destroy();
 						var chart=$('#chart-innerCt').highcharts();
                         var time=parseInt(data[1].substr(0,2));
         text = chart.renderer.text(
-                'AQI ('+time+'h - '+(time+1)+'h) = '+Math.round(maxaqi1h)+' ('+subname+')', 
+                'AQI ('+time+'h - '+(time+1)+'h) = '+Math.round(maxaqi1h[rowid])+' ('+subname1h[rowid]+')', 
                 chart.plotLeft + 50, 
                 chart.plotTop + 30
             ).attr({
@@ -213,7 +238,8 @@ options = {
             }).css({
                 color: textcolor,
                 fontSize: '16px'
-            }).add();
+            }).on('click',function(){aqitable()})
+        .add();
         
         var box = text.getBBox();
         rect=chart.renderer.rect(box.x - 5, box.y - 5, box.width + 10, box.height + 10, 0)
@@ -240,15 +266,16 @@ options = {
             type: 'boxplot',
 	        data: [],
 	        tooltip: {
-	            headerFormat: '<em>Thời gian: {point.key}</em><br/>'
+	            headerFormat: '<em>Date: {point.key}</em><br/>'
 	        }
 	    }, {
-	        name: 'Trung bình',
+	        name: 'Average',
 	        type: 'spline',
             id: 'line',
 	        data: [],
 	        
 	        tooltip: {
+                headerFormat: '<em>Date: {point.key}</em><br/>',
 	            pointFormat: '<span style="color:{series.color}">\u25CF</span> <b>{series.name}</b>: {point.y}'
 	        }
 	    }],
@@ -342,7 +369,12 @@ options = {
                 ex=2;
                 var col = (subs-1)*6 + ex;
         for (var i=0;i<data.length;i++) {
-            var jyea=data[i][0].substr(0,4);
+            
+            if (Ext.getCmp('view').getValue()=='m') {
+                options.series[0].data.push([Date.UTC(data[i][1],data[i][0],1),data[i][col+1],data[i][col+2],data[i][col+3],data[i][col+4],data[i][col+5]]);
+            options.series[1].data.push({x:Date.UTC(2013,4,1),y:data[i][col]});
+            } else {
+                var jyea=data[i][0].substr(0,4);
             var jmon=data[i][0].substr(5,2)-1;
             var jday=data[i][0].substr(8,2);
             var jhou=data[i][1].substr(0,2);
@@ -350,6 +382,7 @@ options = {
             var jsec=data[i][1].substr(6,2);
             options.series[0].data.push([Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),data[i][col+1],data[i][col+2],data[i][col+3],data[i][col+4],data[i][col+5]]);
             options.series[1].data.push({x:Date.UTC(jyea,jmon,jday,jhou,jmin,jsec),y:data[i][col]});
+            }
             if (data[i][col]<0 || data[i][col]>500) options.series[1].data[i].color='red';
 
         };
@@ -358,18 +391,17 @@ options = {
         } else $('#chart-innerCt').highcharts(options);
     }
     function drawchartaqi(){
-		var maxavg1h=[0,0,0,0,0];
-		var avg24h=[0,0,0,0,0];
+		var aqi24h=[];
+        var aqi1h=[[],[],[],[],[]];      
+        var maxaqih=[0,0,0,0,0];
+        iselect=false;
+        isse=false;
         subname24h=null;
         maxaqi24h=0;
+        maxaqi1h=[];
+        subname1h=[];
 		for (var i=0;i<=4;i++) {
-            
-			for (var y=0;y<store.proxy.data.length;y++) {
-                var value=store.proxy.data[y][(haveqcvn[i]-1)*6+ex];
-				maxavg1h[i]=Math.max(maxavg1h[i],value);
-                avg24h[i]=avg24h[i]+value;
-			}
-            avg24h[i]=avg24h[i]/store.proxy.data.length;
+            var avg24h=0;
             var sub=haveqcvn[i];
 							if (arrayqcvn[sub]['klr']==0) {
                                 stand1h=arrayqcvn[sub]['avg_1h'];
@@ -383,14 +415,32 @@ options = {
                                     stand24h=arrayqcvn[sub]['avg_24h']/arrayqcvn[sub]['klr']*24.45;
                                 }
 							if (i==4) stand1h=300;
-            var tam=maxaqi24h;
-            if (stand24h==0) {maxaqi24h=Math.max(maxavg1h[i]/stand1h*100,maxaqi24h);}
-            else maxaqi24h=Math.max(maxavg1h[i]/stand1h*100,avg24h[i]/stand24h*100,maxaqi24h);
-            if (tam!=maxaqi24h) subname24h=arrayqcvn[sub]['name'];
+			for (var y=0;y<store.proxy.data.length;y++) {
+                var value=store.proxy.data[y][(haveqcvn[i]-1)*6+ex];
+				aqi1h[i][y]=value/stand1h*100;
+                maxaqih[i]=Math.max(maxaqih[i],aqi1h[i][y]);
+                avg24h=avg24h+value;
+			}
+            avg24h=avg24h/store.proxy.data.length;
+            if (stand24h!=0) {aqi24h[i]=avg24h/stand24h*100;}
+            else aqi24h[i]=0;  
 		}
+        for (var i=0;i<=4;i++) {
+            var sub=haveqcvn[i];
+            var tam=maxaqi24h;
+            maxaqi24h=Math.max(maxaqi24h,aqi24h[i],maxaqih[i]);
+            if (tam!=maxaqi24h) subname24h=arrayqcvn[sub]['name'];
+        }
+        for (var y=0;y<store.proxy.data.length;y++) {
+            maxaqi1h[y]=Math.max(aqi1h[0][y],aqi1h[1][y],aqi1h[2][y],aqi1h[3][y],aqi1h[4][y]);
+            for (var i=0;i<=4;i++) {
+            var sub=haveqcvn[i];
+            if (maxaqi1h[y]==aqi1h[i][y]) subname1h[y]=arrayqcvn[sub]['name'];
+        }
+        }
         if (maxaqi24h<=50) {fillcolor='rgb(0, 177, 255)';strokecolor='rgba(0, 177, 255, 0.75)';textcolor='#000000';}
                         else if (maxaqi24h<=100) {fillcolor='rgb(255, 255, 0)';strokecolor='rgba(255, 255, 0, 0.75)';textcolor='#000000';}
-                        else if (maxaqi24h<=200) {fillcolor='rgb(255, 167, 0)';strokecolor='rgba(255, 167, 0, 0.75)';textcolor='#000000';}
+                        else if (maxaqi24h<=200) {fillcolor='rgb(255, 191, 65)';strokecolor='rgba(255, 191, 65, 0.75)';textcolor='#000000';}
                         else if (maxaqi24h<=300) {fillcolor='rgb(255, 0, 0)';strokecolor='rgba(255, 0, 0, 0.75)';textcolor='#ffffff';}
                         else {fillcolor='rgb(162, 92, 3)';strokecolor='rgb(162, 92, 3, 0.75)';textcolor='#ffffff';}
         $('#chart-innerCt').highcharts(options);
@@ -425,7 +475,7 @@ options = {
     height:355,
     width: 462,
     layout: 'fit',
-    html: '<table class="aqi-table" style="width:450px"><tr style="background-color:#9d9d9d;text-align:center;color:white"><th class="aqi-th">Khoảng giá tri AQI</th><th class="aqi-th">Chất lượng không khí</th><th class="aqi-th">Ảnh hưởng sức khỏe</th><tr style="background-color:#00b1ff;text-align:center;color:black"><td class="aqi-td" style="width: 100px">0 - 50</td><td class="aqi-td" style="width: 120px">Tốt</td><td class="aqi-td">Không ảnh hưởng đến sức khòe</td></tr><tr style="background-color:#ff0;text-align:center;color:black">  <td class="aqi-td" style="width: 100px">51 - 100</td>  <td class="aqi-td" style="width: 120px">Trung bình</td> <td class="aqi-td">Nhóm nhạy cảm nên hạn chế thời gian ở bên ngoài</td></tr><tr style="background-color:#ffa700;text-align:center;color:black">  <td class="aqi-td" style="width: 100px">101 - 200</td>  <td class="aqi-td" style="width: 120px">Kém</td>  <td class="aqi-td">Nhóm nhạy cảm cần hạn chế thời gian ở bên ngoài</td></tr><tr style="background-color:#f00;text-align:center;color:white">  <td class="aqi-td" style="width: 100px">201 - 300</td>  <td class="aqi-td" style="width: 120px">Xấu</td> <td class="aqi-td">Nhóm nhạy cảm tránh ra ngoài. Những người khác hạn chế ở bên ngoài</td></tr><tr style="background-color:#a25c03;text-align:center;color:white"> <td class="aqi-td" style="width: 100px">Trên 300</td>  <td class="aqi-td" style="width: 120px">Nguy hại</td>  <td class="aqi-td">Mọi người nên ở trong nhà</td></tr></table><p style="font-size:16px">Ghi chú: Nhóm nhạy cảm bao gồm: trẻ em, người già và những người mắc bệnh hô hấp <i>(Quyết định 878/QĐ-TCMT)</i></p>'
+    html: '<table class="aqi-table" style="width:450px"><tr style="background-color:#9d9d9d;text-align:center;color:white"><th class="aqi-th">Khoảng giá tri AQI</th><th class="aqi-th">Chất lượng không khí</th><th class="aqi-th">Ảnh hưởng sức khỏe</th><tr style="background-color:#00b1ff;text-align:center;color:black"><td class="aqi-td" style="width: 100px">0 - 50</td><td class="aqi-td" style="width: 120px">Tốt</td><td class="aqi-td">Không ảnh hưởng đến sức khòe</td></tr><tr style="background-color:#ff0;text-align:center;color:black">  <td class="aqi-td" style="width: 100px">51 - 100</td>  <td class="aqi-td" style="width: 120px">Trung bình</td> <td class="aqi-td">Nhóm nhạy cảm nên hạn chế thời gian ở bên ngoài</td></tr><tr style="background-color:#ffbf41;text-align:center;color:black">  <td class="aqi-td" style="width: 100px">101 - 200</td>  <td class="aqi-td" style="width: 120px">Kém</td>  <td class="aqi-td">Nhóm nhạy cảm cần hạn chế thời gian ở bên ngoài</td></tr><tr style="background-color:#f00;text-align:center;color:white">  <td class="aqi-td" style="width: 100px">201 - 300</td>  <td class="aqi-td" style="width: 120px">Xấu</td> <td class="aqi-td">Nhóm nhạy cảm tránh ra ngoài. Những người khác hạn chế ở bên ngoài</td></tr><tr style="background-color:#a25c03;text-align:center;color:white"> <td class="aqi-td" style="width: 100px">Trên 300</td>  <td class="aqi-td" style="width: 120px">Nguy hại</td>  <td class="aqi-td">Mọi người nên ở trong nhà</td></tr></table><p style="font-size:16px">Ghi chú: Nhóm nhạy cảm bao gồm: trẻ em, người già và những người mắc bệnh hô hấp <i>(Quyết định 878/QĐ-TCMT)</i></p>'
 }).show();
         }
         function getId(value){  

@@ -97,7 +97,7 @@ switch ($_GET["view"])
         break;    
     case "h":
         $dataview="air_quality_data_60min";
-        $result=pg_query($db_conn, "SELECT * FROM $dataview WHERE date='$date' ORDER BY date,time");
+        $result=pg_query($db_conn, "SELECT * FROM $dataview ORDER BY date,time");
     $count=0;
     while ($row = pg_fetch_array($result)) {
         $data[$count][0]=$row[1];
